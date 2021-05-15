@@ -1,0 +1,49 @@
+{
+  "admin": "Admin",
+  "createNewCategory": "Create a new event category",
+  "createNewOrganization": "Create a new organization",
+  "notifications": {
+    "deleteFailed": "Failed to delete",
+    "deleteSuccess": "Deleted successfully"
+  },
+  "organizations": {
+    "deleteOrganization": "Delete organization",
+    "deleteOrganizationConfirmText": "Are you sure you want to delete this organization? This action cannot be undone.",
+    "forms": {
+      "labels": {
+        "name": "Organization name",
+        "slug": "Slug"
+      }
+    },
+    "updateOrganization": "Update organization"
+  },
+  "events": {
+    "list": {
+      "registrations": "Registrations",
+      "registrationsPerQuota": "Registrations by quota"
+    },
+    "delete": {
+      "confirmText": "Are you sure you want to delete this event?"
+    }
+  },
+  "eventCategories": {
+    "delete": {
+      "confirmText": "Are you sure you want to delete this event?",
+      "deleteFailedBADFK": "This event category is still referenced by some events. Delete them first."
+    }
+  },
+  "sider": {
+    "titles": {
+      "createEvent": "Create event",
+      "createEventCategory": "Create event category",
+      "createOrganization": "Create organization",
+      "emails": "Emails",
+      "eventCategories": "Event categories",
+      "events": "Events",
+      "listEventCategories": "List event categories",
+      "listEvents": "List events",
+      "main": "Dashboard",
+      "organizations": "Organizations"
+    }
+  }
+}

@@ -1,0 +1,6 @@
+mutation DeleteEventCategory($id: UUID!) {
+  deleteEventCategory(input: {id: $id}) {
+    clientMutationId
+    __typename
+  }
+}

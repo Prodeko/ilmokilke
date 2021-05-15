@@ -40,7 +40,11 @@ test("currentUser when logged in", async () => {
   const { user, session } = await createUserAndLogIn();
   await runGraphQLQuery(
     // GraphQL query goes here:
-    `{currentUser{id}}`,
+    `{
+      currentUser {
+        id
+      }
+    }`,
 
     // GraphQL variables:
     {},

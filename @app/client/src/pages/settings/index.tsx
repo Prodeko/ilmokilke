@@ -16,9 +16,11 @@ import * as Sentry from "@sentry/react";
 import { Alert, Button, Form, Input, PageHeader } from "antd";
 import { useForm } from "antd/lib/form/Form";
 import { NextPage } from "next";
+import useTranslation from "next-translate/useTranslation";
 import { Store } from "rc-field-form/lib/interface";
 
 const Settings_Profile: NextPage = () => {
+  const { t } = useTranslation();
   const [formError, setFormError] = useState<Error | ApolloError | null>(null);
   const query = useSettingsProfileQuery();
   const { data, loading, error } = query;
@@ -32,7 +34,7 @@ const Settings_Profile: NextPage = () => {
           user={data.currentUser}
         />
       ) : loading ? (
-        "Loading..."
+        t("common:loading")
       ) : error ? (
         <ErrorAlert error={error} />
       ) : (
@@ -43,15 +45,6 @@ const Settings_Profile: NextPage = () => {
 };
 
 export default Settings_Profile;
-
-/**
- * These are the values in our form
- */
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-interface FormValues {
-  username: string;
-  name: string;
-}
 
 interface ProfileSettingsFormProps {
   user: ProfileSettingsForm_UserFragment;

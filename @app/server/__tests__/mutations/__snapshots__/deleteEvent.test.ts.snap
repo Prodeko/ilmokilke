@@ -1,0 +1,36 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`DeleteEvent admin can delete an event 1`] = `
+Object {
+  "data": Object {
+    "deleteEvent": Object {
+      "clientMutationId": null,
+    },
+  },
+}
+`;
+
+exports[`DeleteEvent users without the right permissions cannot delete events 1`] = `
+Object {
+  "data": Object {
+    "deleteEvent": null,
+  },
+  "errors": Array [
+    Object {
+      "extensions": Object {
+        "exception": Object {},
+      },
+      "locations": Array [
+        Object {
+          "column": 3,
+          "line": 3,
+        },
+      ],
+      "message": "No values were deleted in collection 'events' because no values you can delete were found matching these criteria.",
+      "path": Array [
+        "deleteEvent",
+      ],
+    },
+  ],
+}
+`;

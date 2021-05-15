@@ -12,6 +12,23 @@ beforeEach(deleteTestData);
 beforeAll(setup);
 afterAll(teardown);
 
+const createEventQuotasMutation = `
+mutation CreateEventQuotas($input: CreateEventQuotasInput!) {
+  createEventQuotas(input: $input) {
+    quotas {
+      id
+      eventId
+      title
+      size
+      position
+      createdBy
+      updatedBy
+      createdAt
+      updatedAt
+    }
+  }
+}`;
+
 describe("CreateEventQuotas", () => {
   it("can use custom mutation to create multiple quotas", async () => {
     const { events, session } = await createEventDataAndLogin({
@@ -22,17 +39,7 @@ describe("CreateEventQuotas", () => {
     const eventId = events[0].id;
 
     await runGraphQLQuery(
-      `mutation CreateEventQuotas($input: CreateEventQuotasInput!) {
-        createEventQuotas(input: $input) {
-          quotas {
-            id
-            eventId
-            position
-            title
-            size
-          }
-        }
-      }`,
+      createEventQuotasMutation,
 
       // GraphQL variables:
       {
@@ -73,6 +80,8 @@ describe("CreateEventQuotas", () => {
         expect(sanitize(quotas)).toMatchInlineSnapshot(`
           Array [
             Object {
+              "createdAt": "[timestamp-1]",
+              "createdBy": "[id-3]",
               "eventId": "[id-2]",
               "id": "[id-1]",
               "position": 0,
@@ -81,16 +90,22 @@ describe("CreateEventQuotas", () => {
                 "en": "Test quota 1",
                 "fi": "Testikiintiö 1",
               },
+              "updatedAt": "[timestamp-1]",
+              "updatedBy": "[id-4]",
             },
             Object {
+              "createdAt": "[timestamp-1]",
+              "createdBy": "[id-3]",
               "eventId": "[id-2]",
-              "id": "[id-3]",
+              "id": "[id-5]",
               "position": 1,
               "size": 2,
               "title": Object {
                 "en": "Test quota 2",
                 "fi": "Testikiintiö 2",
               },
+              "updatedAt": "[timestamp-1]",
+              "updatedBy": "[id-4]",
             },
           ]
         `);
@@ -120,16 +135,7 @@ describe("CreateEventQuotas", () => {
     const eventId = events[0].id;
 
     await runGraphQLQuery(
-      `mutation CreateEventQuotas($input: CreateEventQuotasInput!) {
-        createEventQuotas(input: $input) {
-          quotas {
-            id
-            title
-            size
-            eventId
-          }
-        }
-      }`,
+      createEventQuotasMutation,
 
       // GraphQL variables:
       {
@@ -165,16 +171,7 @@ describe("CreateEventQuotas", () => {
     const eventId = events[0].id;
 
     await runGraphQLQuery(
-      `mutation CreateEventQuotas($input: CreateEventQuotasInput!) {
-        createEventQuotas(input: $input) {
-          quotas {
-            id
-            title
-            size
-            eventId
-          }
-        }
-      }`,
+      createEventQuotasMutation,
 
       // GraphQL variables:
       {

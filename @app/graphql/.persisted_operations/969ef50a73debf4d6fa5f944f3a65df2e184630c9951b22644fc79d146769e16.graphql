@@ -1,0 +1,131 @@
+fragment AdminEvents_Query on Query {
+  ...AdminLayout_Query
+  events {
+    nodes {
+      ...AdminEvents_Event
+      __typename
+    }
+    __typename
+  }
+  __typename
+}
+fragment AdminLayout_Query on Query {
+  ...SharedLayout_Query
+  currentUser {
+    id
+    organizationMemberships(first: 20) {
+      nodes {
+        id
+        isOwner
+        organization {
+          id
+          name
+          slug
+          __typename
+        }
+        __typename
+      }
+      __typename
+    }
+    __typename
+  }
+  __typename
+}
+fragment SharedLayout_Query on Query {
+  currentUser {
+    ...SharedLayout_User
+    __typename
+  }
+  languages {
+    ...SharedLayout_Languages
+    __typename
+  }
+  __typename
+}
+fragment SharedLayout_User on User {
+  id
+  name
+  username
+  avatarUrl
+  isAdmin
+  isVerified
+  primaryEmail
+  organizationMemberships(first: 20) {
+    totalCount
+    nodes {
+      id
+      isOwner
+      organization {
+        id
+        name
+        slug
+        __typename
+      }
+      __typename
+    }
+    __typename
+  }
+  __typename
+}
+fragment SharedLayout_Languages on AppLanguage {
+  supportedLanguages
+  defaultLanguage
+  __typename
+}
+fragment AdminEvents_Event on Event {
+  ...EventFields
+  quotas(orderBy: POSITION_ASC) {
+    nodes {
+      ...EventPage_Quota
+      __typename
+    }
+    __typename
+  }
+  registrations(orderBy: CREATED_AT_ASC) {
+    nodes {
+      ...EventPage_Registration
+      quota {
+        ...EventPage_Quota
+        __typename
+      }
+      __typename
+    }
+    __typename
+  }
+  __typename
+}
+fragment EventFields on Event {
+  id
+  name
+  slug
+  eventStartTime
+  eventEndTime
+  registrationStartTime
+  registrationEndTime
+  description
+  createdAt
+  isHighlighted
+  isDraft
+  headerImageFile
+  signupOpen
+  signupUpcoming
+  signupClosed
+  __typename
+}
+fragment EventPage_Quota on Quota {
+  id
+  position
+  title
+  size
+  __typename
+}
+fragment EventPage_Registration on Registration {
+  id
+  fullName
+  isQueued
+  createdAt
+  __typename
+}
+query AdminEvents {
+  ...AdminEvents_Query
+}

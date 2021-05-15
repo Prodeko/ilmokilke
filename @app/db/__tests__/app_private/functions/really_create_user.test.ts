@@ -9,7 +9,8 @@ export async function reallyCreateUser(
   name: string | null,
   avatarUrl: string | null,
   password: string | null,
-  emailIsVerified: boolean = false
+  emailIsVerified: boolean = false,
+  isAdmin: boolean = false
 ) {
   const {
     rows: [row],
@@ -18,13 +19,14 @@ export async function reallyCreateUser(
       select new_user.* from app_private.really_create_user(
         username => $1,
         email => $2,
-        email_is_verified => $3,
-        name => $4,
-        avatar_url => $5,
-        password => $6
+        name => $3,
+        avatar_url => $4,
+        password => $5,
+        email_is_verified => $6,
+        is_admin => $7
       ) new_user
       `,
-    [username, email, emailIsVerified, name, avatarUrl, password]
+    [username, email, name, avatarUrl, password, emailIsVerified, isAdmin]
   );
   return row;
 }

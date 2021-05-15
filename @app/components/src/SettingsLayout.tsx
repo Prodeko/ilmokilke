@@ -4,7 +4,7 @@ import React from "react";
 import { Layout, Menu, Typography } from "antd";
 import { TextProps } from "antd/lib/typography/Text";
 import Link from "next/link";
-import { NextRouter, useRouter } from "next/router";
+import { useRouter } from "next/router";
 
 import { Redirect } from "./Redirect";
 import {
@@ -72,8 +72,7 @@ export function SettingsLayout({
 }: SettingsLayoutProps) {
   const href = pages[inHref] ? inHref : Object.keys(pages)[0];
   const page = pages[href];
-  // `useRouter()` sometimes returns null
-  const router: NextRouter | null = useRouter();
+  const router = useRouter();
   const fullHref =
     href + (router && router.query ? `?${qs.stringify(router.query)}` : "");
   return (

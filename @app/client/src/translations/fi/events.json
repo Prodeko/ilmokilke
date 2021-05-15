@@ -75,7 +75,8 @@
   "quota": "Kiintiö",
   "registerToAnEvent": "Ilmoittaudu",
   "removeQuota": "Poista kiintiö",
-  "time": "Aika",
+  "startTime": "Alkamisaika",
+  "endTime": "Loppumisaika",
   "updateEvent": {
     "title": "Päivitä tapahtuma"
   }

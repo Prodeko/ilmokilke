@@ -27,7 +27,8 @@ if (process.env.IN_TESTS) {
 export const createUsers = async (
   client: PoolClient,
   count: number = 1,
-  verified: boolean = true
+  verified: boolean = true,
+  isAdmin: boolean = false
 ) => {
   const users = [];
   if (userCreationCounter > 25) {
@@ -43,18 +44,20 @@ export const createUsers = async (
         `select * from app_private.really_create_user(
         username := $1,
         email := $2,
-        email_is_verified := $3,
-        name := $4,
-        avatar_url := $5,
-        password := $6
+        name := $3,
+        avatar_url := $4,
+        password := $5,
+        email_is_verified := $6,
+        is_admin := $7
       )`,
         [
           `testuser_${userLetter}`,
           email,
-          verified,
           `User ${userLetter}`,
           null,
           password,
+          verified,
+          isAdmin,
         ]
       )
     ).rows[0];
@@ -236,7 +239,7 @@ export const createQuotas = async (
   const quotas = [];
   for (let i = 0; i < count; i++) {
     const title = { fi: `Kiintiö ${i}`, en: `Quota ${i}` };
-    const size = faker.random.number({
+    const size = faker.datatype.number({
       min: 1,
       max: 20,
     });

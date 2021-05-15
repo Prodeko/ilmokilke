@@ -1,0 +1,78 @@
+fragment OrganizationPage_Query on Query {
+  ...SharedLayout_Query
+  organizationBySlug(slug: $slug) {
+    ...OrganizationPage_Organization
+    __typename
+  }
+  __typename
+}
+fragment SharedLayout_Query on Query {
+  currentUser {
+    ...SharedLayout_User
+    __typename
+  }
+  languages {
+    ...SharedLayout_Languages
+    __typename
+  }
+  __typename
+}
+fragment SharedLayout_User on User {
+  id
+  name
+  username
+  avatarUrl
+  isAdmin
+  isVerified
+  primaryEmail
+  organizationMemberships(first: 20) {
+    nodes {
+      id
+      isOwner
+      organization {
+        id
+        name
+        slug
+        __typename
+      }
+      __typename
+    }
+    __typename
+  }
+  __typename
+}
+fragment SharedLayout_Languages on AppLanguage {
+  supportedLanguages
+  defaultLanguage
+  __typename
+}
+fragment OrganizationPage_Organization on Organization {
+  id
+  name
+  slug
+  currentUserIsOwner
+  organizationMemberships(first: 10, offset: $offset, orderBy: [MEMBER_NAME_ASC]) {
+    nodes {
+      ...OrganizationPage_Membership
+      __typename
+    }
+    totalCount
+    __typename
+  }
+  __typename
+}
+fragment OrganizationPage_Membership on OrganizationMembership {
+  id
+  createdAt
+  isOwner
+  user {
+    id
+    username
+    name
+    __typename
+  }
+  __typename
+}
+query OrganizationPage($slug: String!, $offset: Int = 0) {
+  ...OrganizationPage_Query
+}

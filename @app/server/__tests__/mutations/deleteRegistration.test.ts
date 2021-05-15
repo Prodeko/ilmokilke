@@ -11,6 +11,13 @@ beforeEach(deleteTestData);
 beforeAll(setup);
 afterAll(teardown);
 
+const deleteEventRegistrationMutation = `
+mutation DeleteEventRegistration($updateToken: String!) {
+  deleteRegistration(input: { updateToken: $updateToken }) {
+    success
+  }
+}`;
+
 describe("DeleteRegistration", () => {
   it("can delete a registration with a valid updateToken", async () => {
     const { registrationSecrets } = await createEventDataAndLogin();
@@ -20,12 +27,7 @@ describe("DeleteRegistration", () => {
     } = registrationSecrets[0];
 
     await runGraphQLQuery(
-      `mutation DeleteEventRegistration($updateToken: String!) {
-        deleteRegistration(input: { updateToken: $updateToken }) {
-          success
-        }
-      }
-      `,
+      deleteEventRegistrationMutation,
 
       // GraphQL variables:
       { updateToken },
@@ -71,12 +73,7 @@ describe("DeleteRegistration", () => {
 
   it("can't update registration if registration token is not valid", async () => {
     await runGraphQLQuery(
-      `mutation DeleteEventRegistration($updateToken: String!) {
-        deleteRegistration(input: { updateToken: $updateToken }) {
-          success
-        }
-      }
-      `,
+      deleteEventRegistrationMutation,
 
       // GraphQL variables:
       {
@@ -93,6 +90,7 @@ describe("DeleteRegistration", () => {
 
         const message = json.errors![0].message;
         const code = json.errors![0].extensions.exception.code;
+
         expect(message).toEqual("Registration matching token was not found.");
         expect(code).toEqual("NTFND");
       }

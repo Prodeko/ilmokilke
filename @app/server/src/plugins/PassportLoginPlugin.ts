@@ -101,10 +101,10 @@ const PassportLoginPlugin = makeExtendSchemaPlugin((build) => ({
               select users.* from app_private.really_create_user(
                 username => $1,
                 email => $2,
-                email_is_verified => false,
                 name => $3,
                 avatar_url => $4,
-                password => $5
+                password => $5,
+                email_is_verified => false
               ) users where not (users is null)
             ), new_session as (
               insert into app_private.sessions (user_id)

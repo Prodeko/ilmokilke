@@ -1,0 +1,121 @@
+fragment HomePage_Query on Query {
+  ...SharedLayout_Query
+  organizations {
+    nodes {
+      id
+      name
+      __typename
+    }
+    __typename
+  }
+  signupOpenEvents: events(
+    filter: {signupOpen: {equalTo: true}, isDraft: {equalTo: false}}
+    orderBy: REGISTRATION_END_TIME_ASC
+  ) {
+    nodes {
+      ...HomePage_Event
+      __typename
+    }
+    __typename
+  }
+  signupUpcomingEvents: events(
+    filter: {signupUpcoming: {equalTo: true}, isDraft: {equalTo: false}}
+    orderBy: REGISTRATION_END_TIME_ASC
+  ) {
+    nodes {
+      ...HomePage_Event
+      __typename
+    }
+    __typename
+  }
+  eventCategories {
+    nodes {
+      ...EventPage_EventCategory
+      __typename
+    }
+    __typename
+  }
+  __typename
+}
+fragment SharedLayout_Query on Query {
+  currentUser {
+    ...SharedLayout_User
+    __typename
+  }
+  languages {
+    ...SharedLayout_Languages
+    __typename
+  }
+  __typename
+}
+fragment SharedLayout_User on User {
+  id
+  name
+  username
+  avatarUrl
+  isAdmin
+  isVerified
+  primaryEmail
+  organizationMemberships(first: 20) {
+    totalCount
+    nodes {
+      id
+      isOwner
+      organization {
+        id
+        name
+        slug
+        __typename
+      }
+      __typename
+    }
+    __typename
+  }
+  __typename
+}
+fragment SharedLayout_Languages on AppLanguage {
+  supportedLanguages
+  defaultLanguage
+  __typename
+}
+fragment HomePage_Event on Event {
+  ...EventFields
+  id
+  ownerOrganization {
+    id
+    name
+    __typename
+  }
+  category {
+    ...EventPage_EventCategory
+    __typename
+  }
+  __typename
+}
+fragment EventFields on Event {
+  id
+  name
+  slug
+  eventStartTime
+  eventEndTime
+  registrationStartTime
+  registrationEndTime
+  description
+  createdAt
+  isHighlighted
+  isDraft
+  headerImageFile
+  signupOpen
+  signupUpcoming
+  signupClosed
+  __typename
+}
+fragment EventPage_EventCategory on EventCategory {
+  id
+  description
+  name
+  __typename
+}
+query HomePage {
+  ...HomePage_Query
+}

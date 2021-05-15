@@ -1,0 +1,49 @@
+fragment AdminCategoryEvents_Query on Query {
+  eventCategory(id: $id) {
+    id
+    ...AdminCategoryEvents_EventCategory
+    __typename
+  }
+  __typename
+}
+fragment AdminCategoryEvents_EventCategory on EventCategory {
+  id
+  eventsByCategoryId(
+    first: $first
+    orderBy: EVENT_START_TIME_ASC
+    offset: $offset
+    filter: {eventStartTime: {greaterThan: $today}}
+  ) {
+    nodes {
+      name
+      eventStartTime
+      slug
+      eventEndTime
+      id
+      registrations {
+        totalCount
+        __typename
+      }
+      quotas {
+        nodes {
+          id
+          size
+          registrations {
+            totalCount
+            __typename
+          }
+          title
+          __typename
+        }
+        __typename
+      }
+      __typename
+    }
+    totalCount
+    __typename
+  }
+  __typename
+}
+query AdminCategoryEvents($today: Datetime!, $first: Int!, $offset: Int!, $id: UUID!) {
+  ...AdminCategoryEvents_Query
+}

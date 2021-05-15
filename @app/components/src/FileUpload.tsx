@@ -51,7 +51,7 @@ export function FileUpload(props: FileUploadProps) {
         name="headerImageFile"
         onChange={({ fileList }) => {
           setFileList(fileList);
-          // The parentOnChange comes from Form.Item somehow. A propperty called
+          // The parentOnChange comes from Form.Item somehow. A property called
           // getValueFromEvent on the Form.Item gets as input what is passed to
           // parentOnChange
           // @ts-ignore

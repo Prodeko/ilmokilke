@@ -1,12 +1,14 @@
 {
   "backHome": "Go to homepage",
   "create": "Create",
+  "delete": "Delete",
   "description": "Description",
   "dragToUpload": "Click or drag file to this area to upload",
   "emailSwitchLabel": "Show html version",
   "en": "English",
   "fi": "Finnish",
   "headerMenu": {
+    "admin": "Admin",
     "createEvent": "Create event",
     "createEventCategory": "Create event category",
     "createOrganization": "Create organization"

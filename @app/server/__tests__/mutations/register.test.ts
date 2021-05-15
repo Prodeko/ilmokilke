@@ -11,30 +11,32 @@ beforeEach(deleteTestData);
 beforeAll(setup);
 afterAll(teardown);
 
+const registerMutations = `
+mutation Register($username: String!, $password: String!, $name: String!, $email: String!) {
+  register(
+    input: {
+      username: $username
+      password: $password
+      name: $name
+      email: $email
+    }
+  ) {
+    user {
+      id
+      name
+      avatarUrl
+      isAdmin
+      isVerified
+      username
+      createdAt
+      updatedAt
+    }
+  }
+}`;
+
 test("Register", async () => {
   await runGraphQLQuery(
-    // GraphQL query goes here:
-    `mutation Register($username: String!, $password: String!, $name: String!, $email: String!) {
-      register(
-        input: {
-          username: $username
-          password: $password
-          name: $name
-          email: $email
-        }
-      ) {
-        user {
-          id
-          name
-          avatarUrl
-          createdAt
-          isAdmin
-          isVerified
-          updatedAt
-          username
-        }
-      }
-    }`,
+    registerMutations,
 
     // GraphQL variables:
     {

@@ -1,0 +1,50 @@
+{
+  "admin": "Hallintapaneeli",
+  "createNewCategory": "Luo uusi kategoria",
+  "createNewOrganization": "Luo uusi organisaatio",
+  "notifications": {
+    "deleteFailed": "Poisto epäonnistui",
+    "deleteSuccess": "Poistettu onnistuneesti"
+  },
+  "organizations": {
+    "deleteOrganization": "Poista organisaatio",
+    "deleteOrganizationConfirmText": "Haluatko varmasti poistaa tämän organisaation?",
+    "forms": {
+      "labels": {
+        "name": "Organisaation nimi",
+        "slug": "Nimi jota käytetään URL:ssa"
+      }
+    },
+    "siderTitle": "Organisaatiot",
+    "updateOrganization": "Päivitä organisaatio"
+  },
+  "events": {
+    "list": {
+      "registrations": "Rekisteröityneitä",
+      "registrationsPerQuota": "Rekisteröityneet kiintiöittäin"
+    },
+    "delete": {
+      "confirmText": "Haluatko varmasti poistaa tämän tapahtuman?"
+    }
+  },
+  "eventCategories": {
+    "delete": {
+      "confirmText": "Haluatko varmasti poistaa tämän tapahtumakategorian?",
+      "deleteFailedBADFK": "Tämä kategoria on yhä käytössä. Poista ensin kategoriaan liitetyt tapahtumat."
+    }
+  },
+  "sider": {
+    "titles": {
+      "createEvent": "Luo tapahtuma",
+      "createEventCategory": "Luo tapahtumakategoria",
+      "createOrganization": "Luo organisaatio",
+      "emails": "Sähköpostit",
+      "eventCategories": "Tapahtumakategoriat",
+      "events": "Tapahtumat",
+      "listEventCategories": "Näytä tapahtumakategoriat",
+      "listEvents": "Näytä tapahtumat",
+      "main": "Dashboard",
+      "organizations": "Organsaatiot"
+    }
+  }
+}

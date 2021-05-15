@@ -60,6 +60,8 @@ async function rateLimitResolver(
 
 const RateLimitPlugin = makeWrapResolversPlugin({
   Mutation: {
+    // TODO: Delete registration if the user is rate limited.
+    // Currently, a registration is created even if the user is rate limited.
     claimRegistrationToken: async (
       resolve,
       _source,

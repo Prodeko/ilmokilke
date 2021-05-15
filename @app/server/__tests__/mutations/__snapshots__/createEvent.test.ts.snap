@@ -1,11 +1,13 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`CreateEvent 2`] = `
+exports[`CreateEvent can create event while logged in 2`] = `
 Object {
   "data": Object {
     "createEvent": Object {
       "event": Object {
         "categoryId": "[id-3]",
+        "createdAt": "[timestamp-1]",
+        "createdBy": "[id-4]",
         "description": Object {
           "en": "Test description",
           "fi": "Testikuvaus",
@@ -19,8 +21,39 @@ Object {
         },
         "ownerOrganizationId": "[id-2]",
         "slug": "2021-2-20-testitapahtuma",
+        "updatedAt": "[timestamp-1]",
+        "updatedBy": "[id-5]",
       },
     },
   },
+}
+`;
+
+exports[`CreateEvent can't create quotas while logged out 1`] = `
+Object {
+  "data": Object {
+    "createEvent": null,
+  },
+  "errors": Array [
+    Object {
+      "extensions": Object {
+        "exception": Object {
+          "code": "42501",
+          "message": "Permission denied (by RLS)",
+          "severity": "ERROR",
+        },
+      },
+      "locations": Array [
+        Object {
+          "column": 3,
+          "line": 15,
+        },
+      ],
+      "message": "Permission denied (by RLS)",
+      "path": Array [
+        "createEvent",
+      ],
+    },
+  ],
 }
 `;

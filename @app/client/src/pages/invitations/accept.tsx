@@ -106,7 +106,10 @@ const InvitationAcceptInner: React.FC<InvitationAcceptInnerProps> = (props) => {
     }).then(
       () => {
         // Redirect
-        Router.push(`/o/[slug]`, `/o/${organization.slug}`);
+        Router.push(
+          `/admin/organization/[slug]`,
+          `/admin/organization/${organization.slug}`
+        );
       },
       (e) => {
         setStatus(Status.PENDING);

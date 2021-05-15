@@ -9,7 +9,6 @@ import { Alert, Button, Form, Input } from "antd";
 import { useForm } from "antd/lib/form/Form";
 import { NextPage } from "next";
 import Link from "next/link";
-import { Store } from "rc-field-form/lib/interface";
 
 const ForgotPassword: NextPage = () => {
   const [error, setError] = useState<Error | ApolloError | null>(null);
@@ -20,7 +19,7 @@ const ForgotPassword: NextPage = () => {
   const [successfulEmail, setSuccessfulEmail] = useState<string | null>(null);
 
   const handleSubmit = useCallback(
-    (values: Store): void => {
+    (values): void => {
       setError(null);
       (async () => {
         try {

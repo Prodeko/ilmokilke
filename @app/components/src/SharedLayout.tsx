@@ -1,6 +1,5 @@
 import * as React from "react";
 import { useCallback } from "react";
-import CrownOutlined from "@ant-design/icons/CrownOutlined";
 import DownOutlined from "@ant-design/icons/DownOutlined";
 import { ApolloError, QueryResult, useApolloClient } from "@apollo/client";
 import { companyName, projectName } from "@app/config";
@@ -11,16 +10,8 @@ import {
   useLogoutMutation,
 } from "@app/graphql";
 import * as Sentry from "@sentry/react";
-import {
-  Avatar,
-  Col,
-  Dropdown,
-  Grid,
-  Layout,
-  Menu,
-  Row,
-  Typography,
-} from "antd";
+import { Avatar, Col, Dropdown, Layout, Menu, Row, Typography } from "antd";
+import useBreakpoint from "antd/lib/grid/hooks/useBreakpoint";
 import Head from "next/head";
 import Image from "next/image";
 import Link from "next/link";
@@ -33,7 +24,6 @@ import { ErrorAlert, H3, StandardWidth, Warn } from ".";
 
 const { Header, Content, Footer } = Layout;
 const { Text } = Typography;
-const { useBreakpoint } = Grid;
 /*
  * For some reason, possibly related to the interaction between
  * `babel-plugin-import` and https://github.com/babel/babel/pull/9766, we can't
@@ -47,6 +37,7 @@ const _babelHackCol = Col;
 export { _babelHackCol as Col, Link, _babelHackRow as Row };
 
 export const contentMinHeight = "calc(100vh - 64px - 70px)";
+export const contentMaxWidth = "64rem";
 
 export interface SharedLayoutChildProps {
   error?: ApolloError | Error;
@@ -148,7 +139,7 @@ export function SharedLayout({
     ) {
       return (
         <StandardWidth>
-          <Redirect href={"/"} />
+          <Redirect href="/" />
         </StandardWidth>
       );
     } else if (
@@ -228,60 +219,21 @@ export function SharedLayout({
               </H3>
             </Col>
           ) : null}
-          <Col flex="auto" style={{ textAlign: "right" }}>
+          <Col flex="auto" style={{ textAlign: "right", marginRight: "10px" }}>
             <LocaleSelect />
           </Col>
-          <Col md={{ span: 2 }} style={{ textAlign: "right" }} xs={{ span: 7 }}>
+          <Col md={{ span: 2 }} style={{ textAlign: "left" }} xs={{ span: 4 }}>
             {data && data.currentUser ? (
               <Dropdown
                 overlay={
                   <Menu>
-                    {data.currentUser.organizationMemberships.nodes.map(
-                      ({ organization, isOwner }) => (
-                        <Menu.Item key={organization?.id}>
-                          <Link
-                            as={`/o/${organization?.slug}`}
-                            href={`/o/[slug]`}
-                          >
-                            <a>
-                              {organization?.name}
-                              {isOwner ? (
-                                <span>
-                                  {" "}
-                                  <CrownOutlined />
-                                </span>
-                              ) : (
-                                ""
-                              )}
-                            </a>
-                          </Link>
-                        </Menu.Item>
-                      )
-                    )}
                     <Menu.Item>
-                      <Link href="/create-organization">
-                        <a data-cy="layout-link-create-organization">
-                          {t("headerMenu.createOrganization")}
+                      <Link href="/admin">
+                        <a data-cy="layout-link-admin">
+                          {t("headerMenu.admin")}
                         </a>
                       </Link>
                     </Menu.Item>
-                    {data.currentUser?.organizationMemberships?.nodes.length >
-                      0 && [
-                      <Menu.Item key="create-event">
-                        <Link href="/event/create">
-                          <a data-cy="layout-link-create-event">
-                            {t("headerMenu.createEvent")}
-                          </a>
-                        </Link>
-                      </Menu.Item>,
-                      <Menu.Item key="create-event-category">
-                        <Link href="/create-event-category">
-                          <a data-cy="layout-link-create-event-category">
-                            {t("headerMenu.createEventCategory")}
-                          </a>
-                        </Link>
-                      </Menu.Item>,
-                    ]}
                     <Menu.Item>
                       <Link href="/settings">
                         <a data-cy="layout-link-settings">

@@ -1,5 +1,5 @@
 --! Previous: -
---! Hash: sha1:af9ffd0c6b1d63b517797fd034bcca6fbf6e8dfa
+--! Hash: sha1:0a25569004ac1791eb01a81be9db61570d6a4912
 
 --! split: 0001-reset.sql
 /*
@@ -1285,10 +1285,11 @@ grant execute on function app_public.change_password(text, text) to :DATABASE_VI
 create function app_private.really_create_user(
   username citext,
   email text,
-  email_is_verified bool,
   name text,
   avatar_url text,
-  password text default null
+  password text default null,
+  email_is_verified bool default false,
+  is_admin bool default false
 ) returns app_public.users as $$
 declare
   v_user app_public.users;
@@ -1302,8 +1303,8 @@ begin
   end if;
 
   -- Insert the new user
-  insert into app_public.users (username, name, avatar_url) values
-    (v_username, name, avatar_url)
+  insert into app_public.users (username, name, avatar_url, is_admin) values
+    (v_username, name, avatar_url, is_admin)
     returning * into v_user;
 
 	-- Add the user's email
@@ -1324,7 +1325,7 @@ begin
 end;
 $$ language plpgsql volatile set search_path to pg_catalog, public, pg_temp;
 
-comment on function app_private.really_create_user(username citext, email text, email_is_verified bool, name text, avatar_url text, password text) is
+comment on function app_private.really_create_user(username citext, email text, name text, avatar_url text, password text, email_is_verified bool, is_admin bool) is
   E'Creates a user account. All arguments are optional, it trusts the calling method to perform sanitisation.';
 
 /**********/
@@ -1387,9 +1388,9 @@ begin
   v_user = app_private.really_create_user(
     username => v_username,
     email => v_email,
-    email_is_verified => f_email_is_verified,
     name => v_name,
-    avatar_url => v_avatar_url
+    avatar_url => v_avatar_url,
+    email_is_verified => f_email_is_verified
   );
 
   -- Insert the user’s private account data (e.g. OAuth tokens)

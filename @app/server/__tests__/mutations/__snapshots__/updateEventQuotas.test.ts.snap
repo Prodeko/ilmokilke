@@ -6,6 +6,8 @@ Object {
     "updateEventQuotas": Object {
       "quotas": Array [
         Object {
+          "createdAt": "[timestamp-1]",
+          "createdBy": "[id-3]",
           "eventId": "[id-2]",
           "id": "[id-1]",
           "size": 1,
@@ -13,6 +15,8 @@ Object {
             "en": "Test quota 1",
             "fi": "Testikiintiö 1",
           },
+          "updatedAt": "[timestamp-2]",
+          "updatedBy": "[id-3]",
         },
       ],
     },
@@ -26,6 +30,8 @@ Object {
     "updateEventQuotas": Object {
       "quotas": Array [
         Object {
+          "createdAt": "[timestamp-1]",
+          "createdBy": "[id-3]",
           "eventId": "[id-2]",
           "id": "[id-1]",
           "size": 1,
@@ -33,24 +39,34 @@ Object {
             "en": "Test quota 1",
             "fi": "Testikiintiö 1",
           },
+          "updatedAt": "[timestamp-2]",
+          "updatedBy": "[id-3]",
         },
         Object {
+          "createdAt": "[timestamp-1]",
+          "createdBy": "[id-3]",
           "eventId": "[id-2]",
-          "id": "[id-3]",
+          "id": "[id-4]",
           "size": 2,
           "title": Object {
             "en": "Test quota 2",
             "fi": "Testikiintiö 2",
           },
+          "updatedAt": "[timestamp-2]",
+          "updatedBy": "[id-3]",
         },
         Object {
+          "createdAt": "[timestamp-2]",
+          "createdBy": "[id-3]",
           "eventId": "[id-2]",
-          "id": "[id-4]",
+          "id": "[id-5]",
           "size": 2,
           "title": Object {
             "en": "Test quota 3",
             "fi": "Testikiintiö 3",
           },
+          "updatedAt": "[timestamp-2]",
+          "updatedBy": "[id-6]",
         },
       ],
     },
@@ -74,8 +90,8 @@ Object {
       },
       "locations": Array [
         Object {
-          "column": 9,
-          "line": 2,
+          "column": 3,
+          "line": 3,
         },
       ],
       "message": "You must log in to update event quotas",
@@ -103,8 +119,8 @@ Object {
       },
       "locations": Array [
         Object {
-          "column": 9,
-          "line": 2,
+          "column": 3,
+          "line": 3,
         },
       ],
       "message": "You must specify at least one quota",

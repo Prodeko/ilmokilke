@@ -20,7 +20,10 @@ test("ClaimRegistrationToken", async () => {
   await runGraphQLQuery(
     `mutation ClaimRegistrationToken($eventId: UUID!, $quotaId: UUID!) {
       claimRegistrationToken(input: { eventId: $eventId, quotaId: $quotaId }) {
-        registrationToken
+        claimRegistrationTokenOutput {
+          registrationToken
+          updateToken
+        }
       }
     }`,
 
@@ -38,16 +41,18 @@ test("ClaimRegistrationToken", async () => {
       expect(json.errors).toBeFalsy();
       expect(json.data).toBeTruthy();
 
-      const tokenObject = json.data!.claimRegistrationToken;
-      expect(tokenObject).toBeTruthy();
+      const registrationSecrets =
+        json.data!.claimRegistrationToken.claimRegistrationTokenOutput;
+      expect(registrationSecrets).toBeTruthy();
 
-      expect(sanitize(tokenObject)).toMatchInlineSnapshot(`
+      expect(sanitize(registrationSecrets)).toMatchInlineSnapshot(`
         Object {
           "registrationToken": "[id-1]",
+          "updateToken": "[id-2]",
         }
       `);
 
-      const { registrationToken } = tokenObject;
+      const { registrationToken } = registrationSecrets;
       const { rows: secretRows } = await asRoot(pgClient, () =>
         pgClient.query(
           `SELECT * FROM app_private.registration_secrets WHERE registration_token = $1`,

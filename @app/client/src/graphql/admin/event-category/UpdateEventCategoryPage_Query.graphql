@@ -1,0 +1,23 @@
+fragment UpdateEventCategoryPage_EventCategory on EventCategory {
+  ownerOrganization {
+    name
+    id
+    slug
+  }
+  updatedAt
+  name
+  description
+  id
+}
+
+fragment UpdateEventCategoryPage_Query on Query {
+  ...SharedLayout_Query
+  eventCategory(id: $id) {
+    id
+    ...UpdateEventCategoryPage_EventCategory
+  }
+}
+
+query UpdateEventCategoryPage($id: UUID!) {
+  ...UpdateEventCategoryPage_Query
+}

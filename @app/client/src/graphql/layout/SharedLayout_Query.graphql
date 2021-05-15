@@ -16,6 +16,7 @@ fragment SharedLayout_User on User {
   isVerified
   primaryEmail
   organizationMemberships(first: 20) {
+    totalCount
     nodes {
       id
       isOwner

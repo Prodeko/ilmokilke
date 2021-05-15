@@ -1,0 +1,70 @@
+fragment SharedLayout_Query on Query {
+  currentUser {
+    ...SharedLayout_User
+    __typename
+  }
+  languages {
+    ...SharedLayout_Languages
+    __typename
+  }
+  __typename
+}
+fragment SharedLayout_User on User {
+  id
+  name
+  username
+  avatarUrl
+  isAdmin
+  isVerified
+  primaryEmail
+  organizationMemberships(first: 20) {
+    totalCount
+    nodes {
+      id
+      isOwner
+      organization {
+        id
+        name
+        slug
+        __typename
+      }
+      __typename
+    }
+    __typename
+  }
+  __typename
+}
+fragment SharedLayout_Languages on AppLanguage {
+  supportedLanguages
+  defaultLanguage
+  __typename
+}
+fragment EmailsForm_User on User {
+  id
+  userEmails(first: 50) {
+    nodes {
+      ...EmailsForm_UserEmail
+      email
+      isVerified
+      __typename
+    }
+    __typename
+  }
+  __typename
+}
+fragment EmailsForm_UserEmail on UserEmail {
+  id
+  email
+  isVerified
+  isPrimary
+  createdAt
+  __typename
+}
+query SettingsEmails {
+  ...SharedLayout_Query
+  currentUser {
+    isVerified
+    ...EmailsForm_User
+    __typename
+  }
+}

@@ -6,13 +6,12 @@ import {
   SharedLayout,
 } from "@app/components";
 import { Event, HomePageEventsDocument, useHomePageQuery } from "@app/graphql";
-import { Col, Divider, Empty, Grid, Space, Tag } from "antd";
+import { Col, Divider, Empty, Space, Tag } from "antd";
+import useBreakpoint from "antd/lib/grid/hooks/useBreakpoint";
 import dayjs from "dayjs";
 import { NextPage } from "next";
 import Link from "next/link";
 import useTranslation from "next-translate/useTranslation";
-
-const { useBreakpoint } = Grid;
 
 const getColor = (org: string) => {
   // TODO: Store this info in db?
@@ -58,26 +57,35 @@ const Home: NextPage = () => {
   const signupsOpenEvents = query?.data?.signupOpenEvents?.nodes;
   const signupsUpcomingEvents = query?.data?.signupUpcomingEvents?.nodes;
 
+  const nameColumn = {
+    title: t("events:eventName"),
+    dataIndex: ["name", lang],
+    key: "name",
+    render: (name: string, event: Event) => (
+      <Link
+        as={`/event/${event.slug}`}
+        href={{
+          pathname: "/event/[slug]",
+          query: {
+            slug: event.slug,
+          },
+        }}
+      >
+        <a>{name}</a>
+      </Link>
+    ),
+  };
+
+  const endTimeColumn = {
+    title: t("events:endTime"),
+    dataIndex: "eventEndTime",
+    key: "eventEndTime",
+    render: (eventEndTime: string) => dayjs(eventEndTime).format("l LT"),
+  };
+
   const columns = !isMobile
     ? [
-        {
-          title: t("events:eventName"),
-          dataIndex: ["name", lang],
-          key: "name",
-          render: (name: string, event: Event) => (
-            <Link
-              as={`/event/${event.slug}`}
-              href={{
-                pathname: "/event/[slug]",
-                query: {
-                  slug: event.slug,
-                },
-              }}
-            >
-              <a>{name}</a>
-            </Link>
-          ),
-        },
+        nameColumn,
         {
           title: t("events:organizer"),
           dataIndex: ["ownerOrganization", "name"],
@@ -118,40 +126,9 @@ const Home: NextPage = () => {
             </Tag>
           ),
         },
-        {
-          title: t("events:time"),
-          dataIndex: "eventEndTime",
-          key: "eventEndTime",
-          render: (eventEndTime: string) => dayjs(eventEndTime).format("l LT"),
-        },
+        endTimeColumn,
       ]
-    : [
-        {
-          title: t("events:eventName"),
-          dataIndex: ["name", lang],
-          key: "name",
-          render: (name: string, event: Event) => (
-            <Link
-              as={`/event/${event.slug}`}
-              href={{
-                pathname: "/event/[slug]",
-                query: {
-                  slug: event.slug,
-                },
-              }}
-            >
-              <a>{name}</a>
-            </Link>
-          ),
-        },
-        {
-          title: t("events:time"),
-          dataIndex: "eventStartTime",
-          key: "eventStartTime",
-          render: (eventStartTime: string) =>
-            dayjs(eventStartTime).format("l LT"),
-        },
-      ];
+    : [nameColumn, endTimeColumn];
 
   return (
     <SharedLayout query={query} title="">

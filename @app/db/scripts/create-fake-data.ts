@@ -28,19 +28,30 @@ async function createUser(client: PoolClient, username: string) {
     return existingUser;
   }
 
+  // Create user
   const {
     rows: [user],
   } = await client.query(
-    `SELECT * FROM app_private.really_create_user(
-        username := $1,
-        email := $2,
-        email_is_verified := $3,
-        name := $4,
-        avatar_url := $5,
-        password := $6
-      )`,
-    [username, `${username}@prodeko.org`, true, username, null, "kananugetti"]
+    `insert into app_public.users (username, name, is_admin)
+    values ($1, $2, $3) returning *`,
+    [username, username, true]
   );
+
+  // Add user email and set it to verified and primary
+  await client.query(
+    `insert into app_public.user_emails (user_id, email, is_verified, is_primary)
+    values ($1, $2, $3, $3)`,
+    [user.id, `${username}@prodeko.org`, true]
+  );
+
+  // Set user password
+  await client.query(
+    `update app_private.user_secrets
+    set password_hash = crypt($1, gen_salt('bf'))
+    where user_id = $2`,
+    ["kananugetti", user.id]
+  );
+
   return user;
 }
 

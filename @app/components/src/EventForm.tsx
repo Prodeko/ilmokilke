@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
 import DragOutlined from "@ant-design/icons/DragOutlined";
@@ -57,14 +57,23 @@ const { TabPane } = Tabs;
 const { TextArea, Group } = Input;
 const { RangePicker } = DatePicker;
 
-type FormValueName = {
+type TranslatedFormValue = {
   fi: string;
   en: string;
 };
 
 type FormValues = {
-  name: FormValueName;
+  languages: string[];
+  ownerOrganizationId: string;
+  categoryId: string;
+  name: TranslatedFormValue;
+  description: TranslatedFormValue;
   eventTime: Date[];
+  registrationTime: Date[];
+  isHighlighted: boolean;
+  headerImageFile: string;
+  isDraft: boolean;
+  quotas: Quota[];
 };
 
 interface EventFormProps {
@@ -86,7 +95,7 @@ function getFormattedEventTime(dates?: Date[]) {
   return `${eventStartTime} - ${eventEndTime}`;
 }
 
-function getEventSlug(name?: FormValueName, dates?: Date[]) {
+function getEventSlug(name?: TranslatedFormValue, dates?: Date[]) {
   const eventStartTime = dates?.[0].toISOString();
 
   const daySlug = dayjs(eventStartTime).format("YYYY-M-D");
@@ -109,6 +118,7 @@ export const EventForm: React.FC<EventFormProps> = (props) => {
   } = props;
   const { supportedLanguages } = data?.languages || {};
 
+  // Translations, router, apollo
   const { t, lang } = useTranslation("events");
   const router = useRouter();
   const client = useApolloClient();
@@ -122,14 +132,27 @@ export const EventForm: React.FC<EventFormProps> = (props) => {
   const [isDraft, setIsDraft] = useState(
     type === "create" || initialValues.isDraft
   );
+  const [selectedLanguages, setSelectedLanguages] = useState(
+    supportedLanguages || []
+  );
 
+  // Mutations
   const [eventQuery] = useMutation(eventMutationDocument, {
     context: { hasUpload: true },
   });
   const [quotasQuery] = useMutation(quotasMutationDocument);
-  const [selectedLanguages, setSelectedLanguages] = useState(
-    supportedLanguages || []
-  );
+
+  useEffect(() => {
+    // Set form initialValues if they have changed after the initial rendering
+    form.setFieldsValue(initialValues);
+  }, [form, initialValues]);
+
+  useEffect(() => {
+    // Set selected languages if supportedLanguages change
+    if (supportedLanguages) {
+      setSelectedLanguages(supportedLanguages);
+    }
+  }, [supportedLanguages]);
 
   const code = getCodeFromError(formError);
 
@@ -307,7 +330,7 @@ export const EventForm: React.FC<EventFormProps> = (props) => {
           </Form.Item>
           <Form.Item
             label={t("organizer")}
-            name="organizationId"
+            name="ownerOrganizationId"
             rules={[
               {
                 required: true,

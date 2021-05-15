@@ -11,9 +11,9 @@ interface EventRegistrationsTable {
   registrations: Registration[];
 }
 
-const getRegistrationsByQuotaId = (arr: any[]) => {
+const getRegistrationsByQuotaPosition = (arr: any[]) => {
   return arr.reduce((a, x) => {
-    const key = x?.quota?.id;
+    const key = x?.quota?.position;
     (a[key] || (a[key] = [] || [])).push(x);
     return a;
   }, {});
@@ -23,11 +23,11 @@ const getQueuedRegistrations = (arr: any[]) => {
   return arr.filter((x) => x.isQueued);
 };
 
-const getQuotaNameByQuotaId = (arr: any[]) => {
+const getQuotaNameByQuotaPosition = (arr: any[]) => {
   return arr
     .map((x) => x.quota)
     .reduce((a, x) => {
-      a[x.id] = x;
+      a[x.position] = x;
       return a;
     }, {});
 };
@@ -66,11 +66,11 @@ export const EventRegistrationsTable: React.FC<EventRegistrationsTable> = ({
     ...commonColumns,
   ];
 
-  const registrationsByQuotaId = useMemo(
-    () => getRegistrationsByQuotaId(registrations),
+  const registrationsByQuotaPosition = useMemo(
+    () => getRegistrationsByQuotaPosition(registrations),
     [registrations]
   );
-  const quotaNamesById = useMemo(() => getQuotaNameByQuotaId(registrations), [
+  const quotaNamesByPosition = useMemo(() => getQuotaNameByQuotaPosition(registrations), [
     registrations,
   ]);
   const queuedRegistrations = useMemo(
@@ -80,16 +80,16 @@ export const EventRegistrationsTable: React.FC<EventRegistrationsTable> = ({
 
   return (
     <>
-      {Object.keys(registrationsByQuotaId)
+      {Object.keys(registrationsByQuotaPosition)
         .sort()
-        .map((quotaId) => {
-          const quotaTitle = quotaNamesById[quotaId].title[lang];
-          const quotaSize = quotaNamesById[quotaId].size;
-          const quotaRegistrations = registrationsByQuotaId[quotaId].filter(
+        .map((position) => {
+          const quotaTitle = quotaNamesByPosition[position].title[lang];
+          const quotaSize = quotaNamesByPosition[position].size;
+          const quotaRegistrations = registrationsByQuotaPosition[position].filter(
             (r: Registration) => !r.isQueued
           );
           return (
-            <div key={quotaId}>
+            <div key={position}>
               <H4 style={{ marginTop: "1.5rem" }}>
                 {quotaTitle} – {quotaRegistrations?.length} / {quotaSize}
               </H4>

@@ -107,8 +107,15 @@ input ClaimRegistrationTokenInput {
   quotaId: UUID!
 }
 
+type ClaimRegistrationTokenOutput {
+  registrationToken: String
+  updateToken: String
+}
+
 """The output of our `claimRegistrationToken` mutation."""
 type ClaimRegistrationTokenPayload {
+  claimRegistrationTokenOutput: ClaimRegistrationTokenOutput
+
   """
   The exact same `clientMutationId` that was provided in the mutation input,
   unchanged and unused. May be used by a client to track mutations.
@@ -119,7 +126,6 @@ type ClaimRegistrationTokenPayload {
   Our root query field type. Allows us to run any query from our mutation payload.
   """
   query: Query
-  registrationToken: String
 }
 
 """All input for the `confirmAccountDeletion` mutation."""
@@ -183,6 +189,12 @@ type CreateEventCategoryPayload {
   Our root query field type. Allows us to run any query from our mutation payload.
   """
   query: Query
+
+  """Reads a single `User` that is related to this `EventCategory`."""
+  userByCreatedBy: User
+
+  """Reads a single `User` that is related to this `EventCategory`."""
+  userByUpdatedBy: User
 }
 
 """All input for the create `Event` mutation."""
@@ -224,6 +236,12 @@ type CreateEventPayload {
   Our root query field type. Allows us to run any query from our mutation payload.
   """
   query: Query
+
+  """Reads a single `User` that is related to this `Event`."""
+  userByCreatedBy: User
+
+  """Reads a single `User` that is related to this `Event`."""
+  userByUpdatedBy: User
 }
 
 """All input for the create `EventQuestion` mutation."""
@@ -262,6 +280,12 @@ type CreateEventQuestionPayload {
   Our root query field type. Allows us to run any query from our mutation payload.
   """
   query: Query
+
+  """Reads a single `User` that is related to this `EventQuestion`."""
+  userByCreatedBy: User
+
+  """Reads a single `User` that is related to this `EventQuestion`."""
+  userByUpdatedBy: User
 }
 
 """An input for mutations affecting `CreateEventQuota`"""
@@ -497,6 +521,12 @@ type DeleteEventCategoryPayload {
   Our root query field type. Allows us to run any query from our mutation payload.
   """
   query: Query
+
+  """Reads a single `User` that is related to this `EventCategory`."""
+  userByCreatedBy: User
+
+  """Reads a single `User` that is related to this `EventCategory`."""
+  userByUpdatedBy: User
 }
 
 """All input for the `deleteEvent` mutation."""
@@ -539,6 +569,12 @@ type DeleteEventPayload {
   Our root query field type. Allows us to run any query from our mutation payload.
   """
   query: Query
+
+  """Reads a single `User` that is related to this `Event`."""
+  userByCreatedBy: User
+
+  """Reads a single `User` that is related to this `Event`."""
+  userByUpdatedBy: User
 }
 
 """All input for the `deleteEventQuestion` mutation."""
@@ -576,6 +612,12 @@ type DeleteEventQuestionPayload {
   Our root query field type. Allows us to run any query from our mutation payload.
   """
   query: Query
+
+  """Reads a single `User` that is related to this `EventQuestion`."""
+  userByCreatedBy: User
+
+  """Reads a single `User` that is related to this `EventQuestion`."""
+  userByUpdatedBy: User
 }
 
 """All input for the `deleteOrganization` mutation."""
@@ -724,6 +766,7 @@ type Event {
   """Id of the event category."""
   categoryId: UUID!
   createdAt: Datetime!
+  createdBy: UUID
 
   """Description of the event."""
   description: JSON!
@@ -875,6 +918,13 @@ type Event {
   """Slug for the event."""
   slug: String!
   updatedAt: Datetime!
+  updatedBy: UUID
+
+  """Reads a single `User` that is related to this `Event`."""
+  userByCreatedBy: User
+
+  """Reads a single `User` that is related to this `Event`."""
+  userByUpdatedBy: User
 }
 
 """A connection to a list of `EventCategory` values."""
@@ -905,6 +955,8 @@ type EventCategoriesEdge {
 
 """Methods to use when ordering `EventCategory`."""
 enum EventCategoriesOrderBy {
+  CREATED_BY_ASC
+  CREATED_BY_DESC
   ID_ASC
   ID_DESC
   NAME_ASC
@@ -914,11 +966,14 @@ enum EventCategoriesOrderBy {
   OWNER_ORGANIZATION_ID_DESC
   PRIMARY_KEY_ASC
   PRIMARY_KEY_DESC
+  UPDATED_BY_ASC
+  UPDATED_BY_DESC
 }
 
 """Table for event categories."""
 type EventCategory {
   createdAt: Datetime!
+  createdBy: UUID
 
   """Short description of the event category."""
   description: JSON!
@@ -969,6 +1024,13 @@ type EventCategory {
   """Identifier of the organizer."""
   ownerOrganizationId: UUID!
   updatedAt: Datetime!
+  updatedBy: UUID
+
+  """Reads a single `User` that is related to this `EventCategory`."""
+  userByCreatedBy: User
+
+  """Reads a single `User` that is related to this `EventCategory`."""
+  userByUpdatedBy: User
 }
 
 """
@@ -976,6 +1038,9 @@ A condition to be used against `EventCategory` object types. All fields are
 tested for equality and combined with a logical ‘and.’
 """
 input EventCategoryCondition {
+  """Checks for equality with the object’s `createdBy` field."""
+  createdBy: UUID
+
   """Checks for equality with the object’s `id` field."""
   id: UUID
 
@@ -984,6 +1049,9 @@ input EventCategoryCondition {
 
   """Checks for equality with the object’s `ownerOrganizationId` field."""
   ownerOrganizationId: UUID
+
+  """Checks for equality with the object’s `updatedBy` field."""
+  updatedBy: UUID
 }
 
 """
@@ -992,6 +1060,9 @@ A filter to be used against `EventCategory` object types. All fields are combine
 input EventCategoryFilter {
   """Checks for all expressions in this list."""
   and: [EventCategoryFilter!]
+
+  """Filter by the object’s `createdBy` field."""
+  createdBy: UUIDFilter
 
   """Filter by the object’s `id` field."""
   id: UUIDFilter
@@ -1007,6 +1078,9 @@ input EventCategoryFilter {
 
   """Filter by the object’s `ownerOrganizationId` field."""
   ownerOrganizationId: UUIDFilter
+
+  """Filter by the object’s `updatedBy` field."""
+  updatedBy: UUIDFilter
 }
 
 """An input for mutations affecting `EventCategory`"""
@@ -1042,6 +1116,9 @@ input EventCondition {
   """Checks for equality with the object’s `categoryId` field."""
   categoryId: UUID
 
+  """Checks for equality with the object’s `createdBy` field."""
+  createdBy: UUID
+
   """Checks for equality with the object’s `eventEndTime` field."""
   eventEndTime: Datetime
 
@@ -1065,6 +1142,9 @@ input EventCondition {
 
   """Checks for equality with the object’s `slug` field."""
   slug: String
+
+  """Checks for equality with the object’s `updatedBy` field."""
+  updatedBy: UUID
 }
 
 """
@@ -1076,6 +1156,9 @@ input EventFilter {
 
   """Filter by the object’s `categoryId` field."""
   categoryId: UUIDFilter
+
+  """Filter by the object’s `createdBy` field."""
+  createdBy: UUIDFilter
 
   """Filter by the object’s `eventEndTime` field."""
   eventEndTime: DatetimeFilter
@@ -1115,6 +1198,9 @@ input EventFilter {
 
   """Filter by the object’s `slug` field."""
   slug: StringFilter
+
+  """Filter by the object’s `updatedBy` field."""
+  updatedBy: UUIDFilter
 }
 
 """An input for mutations affecting `Event`"""
@@ -1199,6 +1285,7 @@ input EventPatch {
 
 type EventQuestion {
   createdAt: Datetime!
+  createdBy: UUID
 
   """Reads a single `Event` that is related to this `EventQuestion`."""
   event: Event
@@ -1207,6 +1294,13 @@ type EventQuestion {
   options: JSON
   type: QuestionType!
   updatedAt: Datetime!
+  updatedBy: UUID
+
+  """Reads a single `User` that is related to this `EventQuestion`."""
+  userByCreatedBy: User
+
+  """Reads a single `User` that is related to this `EventQuestion`."""
+  userByUpdatedBy: User
 }
 
 """
@@ -1214,11 +1308,17 @@ A condition to be used against `EventQuestion` object types. All fields are
 tested for equality and combined with a logical ‘and.’
 """
 input EventQuestionCondition {
+  """Checks for equality with the object’s `createdBy` field."""
+  createdBy: UUID
+
   """Checks for equality with the object’s `eventId` field."""
   eventId: UUID
 
   """Checks for equality with the object’s `id` field."""
   id: UUID
+
+  """Checks for equality with the object’s `updatedBy` field."""
+  updatedBy: UUID
 }
 
 """
@@ -1227,6 +1327,9 @@ A filter to be used against `EventQuestion` object types. All fields are combine
 input EventQuestionFilter {
   """Checks for all expressions in this list."""
   and: [EventQuestionFilter!]
+
+  """Filter by the object’s `createdBy` field."""
+  createdBy: UUIDFilter
 
   """Filter by the object’s `eventId` field."""
   eventId: UUIDFilter
@@ -1239,6 +1342,9 @@ input EventQuestionFilter {
 
   """Checks for any expressions in this list."""
   or: [EventQuestionFilter!]
+
+  """Filter by the object’s `updatedBy` field."""
+  updatedBy: UUIDFilter
 }
 
 """An input for mutations affecting `EventQuestion`"""
@@ -1285,6 +1391,8 @@ type EventQuestionsEdge {
 
 """Methods to use when ordering `EventQuestion`."""
 enum EventQuestionsOrderBy {
+  CREATED_BY_ASC
+  CREATED_BY_DESC
   EVENT_ID_ASC
   EVENT_ID_DESC
   ID_ASC
@@ -1292,6 +1400,8 @@ enum EventQuestionsOrderBy {
   NATURAL
   PRIMARY_KEY_ASC
   PRIMARY_KEY_DESC
+  UPDATED_BY_ASC
+  UPDATED_BY_DESC
 }
 
 type EventRegistrationsSubscriptionPayload {
@@ -1329,6 +1439,8 @@ type EventsEdge {
 enum EventsOrderBy {
   CATEGORY_ID_ASC
   CATEGORY_ID_DESC
+  CREATED_BY_ASC
+  CREATED_BY_DESC
   EVENT_END_TIME_ASC
   EVENT_END_TIME_DESC
   EVENT_START_TIME_ASC
@@ -1348,6 +1460,8 @@ enum EventsOrderBy {
   REGISTRATION_START_TIME_DESC
   SLUG_ASC
   SLUG_DESC
+  UPDATED_BY_ASC
+  UPDATED_BY_DESC
 }
 
 """All input for the `forgotPassword` mutation."""
@@ -2193,6 +2307,8 @@ type PageInfo {
 type Query {
   """The currently logged in user (or null if not logged in)."""
   currentUser: User
+  currentUserIsAdmin: Boolean
+  currentUserIsOwnerOrganizationMember(ownerOrganizationId: UUID!): Boolean
   event(id: UUID!): Event
   eventBySlug(slug: String!): Event
 
@@ -2438,6 +2554,7 @@ enum QuestionType {
 """Main table for registration quotas."""
 type Quota {
   createdAt: Datetime!
+  createdBy: UUID
 
   """Reads a single `Event` that is related to this `Quota`."""
   event: Event
@@ -2495,12 +2612,22 @@ type Quota {
   """Title for the quota."""
   title: JSON!
   updatedAt: Datetime!
+  updatedBy: UUID
+
+  """Reads a single `User` that is related to this `Quota`."""
+  userByCreatedBy: User
+
+  """Reads a single `User` that is related to this `Quota`."""
+  userByUpdatedBy: User
 }
 
 """
 A condition to be used against `Quota` object types. All fields are tested for equality and combined with a logical ‘and.’
 """
 input QuotaCondition {
+  """Checks for equality with the object’s `createdBy` field."""
+  createdBy: UUID
+
   """Checks for equality with the object’s `eventId` field."""
   eventId: UUID
 
@@ -2509,6 +2636,9 @@ input QuotaCondition {
 
   """Checks for equality with the object’s `position` field."""
   position: Int
+
+  """Checks for equality with the object’s `updatedBy` field."""
+  updatedBy: UUID
 }
 
 """
@@ -2517,6 +2647,9 @@ A filter to be used against `Quota` object types. All fields are combined with a
 input QuotaFilter {
   """Checks for all expressions in this list."""
   and: [QuotaFilter!]
+
+  """Filter by the object’s `createdBy` field."""
+  createdBy: UUIDFilter
 
   """Filter by the object’s `eventId` field."""
   eventId: UUIDFilter
@@ -2532,6 +2665,9 @@ input QuotaFilter {
 
   """Filter by the object’s `position` field."""
   position: IntFilter
+
+  """Filter by the object’s `updatedBy` field."""
+  updatedBy: UUIDFilter
 }
 
 """A connection to a list of `Quota` values."""
@@ -2562,6 +2698,8 @@ type QuotasEdge {
 
 """Methods to use when ordering `Quota`."""
 enum QuotasOrderBy {
+  CREATED_BY_ASC
+  CREATED_BY_DESC
   EVENT_ID_ASC
   EVENT_ID_DESC
   ID_ASC
@@ -2571,6 +2709,8 @@ enum QuotasOrderBy {
   POSITION_DESC
   PRIMARY_KEY_ASC
   PRIMARY_KEY_DESC
+  UPDATED_BY_ASC
+  UPDATED_BY_DESC
 }
 
 input RegisterInput {
@@ -3094,6 +3234,12 @@ type UpdateEventCategoryPayload {
   Our root query field type. Allows us to run any query from our mutation payload.
   """
   query: Query
+
+  """Reads a single `User` that is related to this `EventCategory`."""
+  userByCreatedBy: User
+
+  """Reads a single `User` that is related to this `EventCategory`."""
+  userByUpdatedBy: User
 }
 
 """All input for the `updateEvent` mutation."""
@@ -3140,6 +3286,12 @@ type UpdateEventPayload {
   Our root query field type. Allows us to run any query from our mutation payload.
   """
   query: Query
+
+  """Reads a single `User` that is related to this `Event`."""
+  userByCreatedBy: User
+
+  """Reads a single `User` that is related to this `Event`."""
+  userByUpdatedBy: User
 }
 
 """All input for the `updateEventQuestion` mutation."""
@@ -3181,6 +3333,12 @@ type UpdateEventQuestionPayload {
   Our root query field type. Allows us to run any query from our mutation payload.
   """
   query: Query
+
+  """Reads a single `User` that is related to this `EventQuestion`."""
+  userByCreatedBy: User
+
+  """Reads a single `User` that is related to this `EventQuestion`."""
+  userByUpdatedBy: User
 }
 
 """An input for mutations affecting `UpdateEventQuota`"""
@@ -3342,6 +3500,210 @@ type User {
   """Optional avatar URL."""
   avatarUrl: String
   createdAt: Datetime!
+
+  """Reads and enables pagination through a set of `EventCategory`."""
+  eventCategoriesByCreatedBy(
+    """Read all values in the set after (below) this cursor."""
+    after: Cursor
+
+    """Read all values in the set before (above) this cursor."""
+    before: Cursor
+
+    """
+    A condition to be used in determining which values should be returned by the collection.
+    """
+    condition: EventCategoryCondition
+
+    """
+    A filter to be used in determining which values should be returned by the collection.
+    """
+    filter: EventCategoryFilter
+
+    """Only read the first `n` values of the set."""
+    first: Int
+
+    """Only read the last `n` values of the set."""
+    last: Int
+
+    """
+    Skip the first `n` values from our `after` cursor, an alternative to cursor
+    based pagination. May not be used with `last`.
+    """
+    offset: Int
+
+    """The method to use when ordering `EventCategory`."""
+    orderBy: [EventCategoriesOrderBy!] = [PRIMARY_KEY_ASC]
+  ): EventCategoriesConnection!
+
+  """Reads and enables pagination through a set of `EventCategory`."""
+  eventCategoriesByUpdatedBy(
+    """Read all values in the set after (below) this cursor."""
+    after: Cursor
+
+    """Read all values in the set before (above) this cursor."""
+    before: Cursor
+
+    """
+    A condition to be used in determining which values should be returned by the collection.
+    """
+    condition: EventCategoryCondition
+
+    """
+    A filter to be used in determining which values should be returned by the collection.
+    """
+    filter: EventCategoryFilter
+
+    """Only read the first `n` values of the set."""
+    first: Int
+
+    """Only read the last `n` values of the set."""
+    last: Int
+
+    """
+    Skip the first `n` values from our `after` cursor, an alternative to cursor
+    based pagination. May not be used with `last`.
+    """
+    offset: Int
+
+    """The method to use when ordering `EventCategory`."""
+    orderBy: [EventCategoriesOrderBy!] = [PRIMARY_KEY_ASC]
+  ): EventCategoriesConnection!
+
+  """Reads and enables pagination through a set of `EventQuestion`."""
+  eventQuestionsByCreatedBy(
+    """Read all values in the set after (below) this cursor."""
+    after: Cursor
+
+    """Read all values in the set before (above) this cursor."""
+    before: Cursor
+
+    """
+    A condition to be used in determining which values should be returned by the collection.
+    """
+    condition: EventQuestionCondition
+
+    """
+    A filter to be used in determining which values should be returned by the collection.
+    """
+    filter: EventQuestionFilter
+
+    """Only read the first `n` values of the set."""
+    first: Int
+
+    """Only read the last `n` values of the set."""
+    last: Int
+
+    """
+    Skip the first `n` values from our `after` cursor, an alternative to cursor
+    based pagination. May not be used with `last`.
+    """
+    offset: Int
+
+    """The method to use when ordering `EventQuestion`."""
+    orderBy: [EventQuestionsOrderBy!] = [PRIMARY_KEY_ASC]
+  ): EventQuestionsConnection!
+
+  """Reads and enables pagination through a set of `EventQuestion`."""
+  eventQuestionsByUpdatedBy(
+    """Read all values in the set after (below) this cursor."""
+    after: Cursor
+
+    """Read all values in the set before (above) this cursor."""
+    before: Cursor
+
+    """
+    A condition to be used in determining which values should be returned by the collection.
+    """
+    condition: EventQuestionCondition
+
+    """
+    A filter to be used in determining which values should be returned by the collection.
+    """
+    filter: EventQuestionFilter
+
+    """Only read the first `n` values of the set."""
+    first: Int
+
+    """Only read the last `n` values of the set."""
+    last: Int
+
+    """
+    Skip the first `n` values from our `after` cursor, an alternative to cursor
+    based pagination. May not be used with `last`.
+    """
+    offset: Int
+
+    """The method to use when ordering `EventQuestion`."""
+    orderBy: [EventQuestionsOrderBy!] = [PRIMARY_KEY_ASC]
+  ): EventQuestionsConnection!
+
+  """Reads and enables pagination through a set of `Event`."""
+  eventsByCreatedBy(
+    """Read all values in the set after (below) this cursor."""
+    after: Cursor
+
+    """Read all values in the set before (above) this cursor."""
+    before: Cursor
+
+    """
+    A condition to be used in determining which values should be returned by the collection.
+    """
+    condition: EventCondition
+
+    """
+    A filter to be used in determining which values should be returned by the collection.
+    """
+    filter: EventFilter
+
+    """Only read the first `n` values of the set."""
+    first: Int
+
+    """Only read the last `n` values of the set."""
+    last: Int
+
+    """
+    Skip the first `n` values from our `after` cursor, an alternative to cursor
+    based pagination. May not be used with `last`.
+    """
+    offset: Int
+
+    """The method to use when ordering `Event`."""
+    orderBy: [EventsOrderBy!] = [PRIMARY_KEY_ASC]
+  ): EventsConnection!
+
+  """Reads and enables pagination through a set of `Event`."""
+  eventsByUpdatedBy(
+    """Read all values in the set after (below) this cursor."""
+    after: Cursor
+
+    """Read all values in the set before (above) this cursor."""
+    before: Cursor
+
+    """
+    A condition to be used in determining which values should be returned by the collection.
+    """
+    condition: EventCondition
+
+    """
+    A filter to be used in determining which values should be returned by the collection.
+    """
+    filter: EventFilter
+
+    """Only read the first `n` values of the set."""
+    first: Int
+
+    """Only read the last `n` values of the set."""
+    last: Int
+
+    """
+    Skip the first `n` values from our `after` cursor, an alternative to cursor
+    based pagination. May not be used with `last`.
+    """
+    offset: Int
+
+    """The method to use when ordering `Event`."""
+    orderBy: [EventsOrderBy!] = [PRIMARY_KEY_ASC]
+  ): EventsConnection!
   hasPassword: Boolean
 
   """Unique identifier for the user."""
@@ -3389,7 +3751,77 @@ type User {
     """The method to use when ordering `OrganizationMembership`."""
     orderBy: [OrganizationMembershipsOrderBy!] = [PRIMARY_KEY_ASC]
   ): OrganizationMembershipsConnection!
+
+  """Users primary email."""
   primaryEmail: String
+
+  """Reads and enables pagination through a set of `Quota`."""
+  quotasByCreatedBy(
+    """Read all values in the set after (below) this cursor."""
+    after: Cursor
+
+    """Read all values in the set before (above) this cursor."""
+    before: Cursor
+
+    """
+    A condition to be used in determining which values should be returned by the collection.
+    """
+    condition: QuotaCondition
+
+    """
+    A filter to be used in determining which values should be returned by the collection.
+    """
+    filter: QuotaFilter
+
+    """Only read the first `n` values of the set."""
+    first: Int
+
+    """Only read the last `n` values of the set."""
+    last: Int
+
+    """
+    Skip the first `n` values from our `after` cursor, an alternative to cursor
+    based pagination. May not be used with `last`.
+    """
+    offset: Int
+
+    """The method to use when ordering `Quota`."""
+    orderBy: [QuotasOrderBy!] = [PRIMARY_KEY_ASC]
+  ): QuotasConnection!
+
+  """Reads and enables pagination through a set of `Quota`."""
+  quotasByUpdatedBy(
+    """Read all values in the set after (below) this cursor."""
+    after: Cursor
+
+    """Read all values in the set before (above) this cursor."""
+    before: Cursor
+
+    """
+    A condition to be used in determining which values should be returned by the collection.
+    """
+    condition: QuotaCondition
+
+    """
+    A filter to be used in determining which values should be returned by the collection.
+    """
+    filter: QuotaFilter
+
+    """Only read the first `n` values of the set."""
+    first: Int
+
+    """Only read the last `n` values of the set."""
+    last: Int
+
+    """
+    Skip the first `n` values from our `after` cursor, an alternative to cursor
+    based pagination. May not be used with `last`.
+    """
+    offset: Int
+
+    """The method to use when ordering `Quota`."""
+    orderBy: [QuotasOrderBy!] = [PRIMARY_KEY_ASC]
+  ): QuotasConnection!
   updatedAt: Datetime!
 
   """Reads and enables pagination through a set of `UserAuthentication`."""

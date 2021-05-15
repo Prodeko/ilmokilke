@@ -188,11 +188,6 @@
           "resultFieldName": "success"
         }
       },
-      "app_public.claim_registration_token": {
-        "tags": {
-          "resultFieldName": "registrationToken"
-        }
-      },
       "app_public.create_organization": {
         "description": "An `Organization` is a great way of sharing access to resources between multiple users without compromising security. When you create an organization you will have the 'owner' role. You may invite other users and redistribute roles."
       },

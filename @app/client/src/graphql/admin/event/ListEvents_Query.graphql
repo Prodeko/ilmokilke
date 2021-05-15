@@ -1,0 +1,33 @@
+fragment Events_Event on Event {
+  ...EventFields
+  category {
+    ...EventPage_EventCategory
+  }
+  quotas(orderBy: POSITION_ASC) {
+    nodes {
+      ...EventPage_Quota
+      registrations {
+        totalCount
+      }
+    }
+  }
+  registrations(orderBy: CREATED_AT_ASC) {
+    totalCount
+    nodes {
+      ...EventPage_Registration
+    }
+  }
+}
+
+fragment ListEvents_Query on Query {
+  events(first: $first, offset: $offset, orderBy: EVENT_END_TIME_ASC) {
+    nodes {
+      id
+      ...Events_Event
+    }
+  }
+}
+
+query ListEvents($offset: Int!, $first: Int!) {
+  ...ListEvents_Query
+}

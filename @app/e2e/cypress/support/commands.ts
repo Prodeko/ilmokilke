@@ -132,6 +132,7 @@ function login(payload?: {
   username?: string;
   name?: string;
   verified?: boolean;
+  isAdmin?: boolean;
   password?: string;
   orgs?: [[string, string] | [string, string, boolean]];
   existingUser?: true;

@@ -42,6 +42,12 @@ export async function createUserAndLogIn() {
 }
 
 interface CreateEventDataAndLogin {
+  userOptions?: {
+    create: boolean;
+    amount?: number;
+    isVerified?: boolean;
+    isAdmin?: boolean;
+  };
   eventOptions?: {
     create: boolean;
     amount?: number;
@@ -54,6 +60,12 @@ interface CreateEventDataAndLogin {
 
 export async function createEventDataAndLogin(args?: CreateEventDataAndLogin) {
   const {
+    userOptions = {
+      create: true,
+      amount: 1,
+      isVerified: false,
+      isAdmin: false,
+    },
     eventOptions = { create: true, amount: 1, signupOpen: true },
     quotaOptions = { create: true, amount: 1 },
     registrationOptions = { create: true, amount: 1 },
@@ -65,8 +77,20 @@ export async function createEventDataAndLogin(args?: CreateEventDataAndLogin) {
     // Have to begin a transaction here, since we set the third parameter
     // of set_config to 'true' in becomeUser below
     client.query("BEGIN");
-    const [user] = await createUsers(client, 1, true);
-    const session = await createSession(client, user.id);
+    let users;
+    if (userOptions.create) {
+      users = await createUsers(
+        client,
+        userOptions.amount,
+        userOptions.isVerified,
+        userOptions.isAdmin
+      );
+    }
+    const primaryUser = users[0];
+
+    // Use the first user as the one to create the session for. We can
+    // then use the other user to test for example RLS policies
+    const session = await createSession(client, primaryUser.id);
 
     await becomeUser(client, session.uuid);
 
@@ -127,7 +151,7 @@ export async function createEventDataAndLogin(args?: CreateEventDataAndLogin) {
 
     client.query("COMMIT");
     return {
-      user,
+      users,
       session,
       organization,
       eventCategory,
@@ -192,7 +216,8 @@ export function sanitize(json: any): any {
         (k.endsWith("Id") &&
           (typeof json[k] === "number" || typeof json[k] === "string")) ||
         (k.endsWith("Uuid") && typeof k === "string") ||
-        k === "registrationToken"
+        k.endsWith("Token") ||
+        k.endsWith("By")
       ) {
         result[k] = mask(result[k], "id");
       } else if (

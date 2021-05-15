@@ -12,6 +12,22 @@ beforeEach(deleteTestData);
 beforeAll(setup);
 afterAll(teardown);
 
+const updateEventQuotasMutation = `
+mutation UpdateEventQuotas($input: UpdateEventQuotasInput!) {
+  updateEventQuotas(input: $input) {
+    quotas {
+      id
+      title
+      size
+      eventId
+      createdBy
+      updatedBy
+      createdAt
+      updatedAt
+    }
+  }
+}`;
+
 describe("UpdateEventQuotas", () => {
   it("can use custom mutation to update multiple quotas", async () => {
     // Create two quotas, update them and add a third with a single mutation
@@ -23,16 +39,7 @@ describe("UpdateEventQuotas", () => {
     const eventId = events[0].id;
 
     await runGraphQLQuery(
-      `mutation UpdateEventQuotas($input: UpdateEventQuotasInput!) {
-        updateEventQuotas(input: $input) {
-          quotas {
-            id
-            title
-            size
-            eventId
-          }
-        }
-      }`,
+      updateEventQuotasMutation,
 
       // GraphQL variables:
       {
@@ -90,36 +97,48 @@ describe("UpdateEventQuotas", () => {
         expect(quotas[2].eventId).toEqual(eventId);
 
         expect(sanitize(quotas)).toMatchInlineSnapshot(`
-        Array [
-          Object {
-            "eventId": "[id-2]",
-            "id": "[id-1]",
-            "size": 1,
-            "title": Object {
-              "en": "Test quota 1",
-              "fi": "Testikiintiö 1",
+          Array [
+            Object {
+              "createdAt": "[timestamp-1]",
+              "createdBy": "[id-3]",
+              "eventId": "[id-2]",
+              "id": "[id-1]",
+              "size": 1,
+              "title": Object {
+                "en": "Test quota 1",
+                "fi": "Testikiintiö 1",
+              },
+              "updatedAt": "[timestamp-2]",
+              "updatedBy": "[id-3]",
             },
-          },
-          Object {
-            "eventId": "[id-2]",
-            "id": "[id-3]",
-            "size": 2,
-            "title": Object {
-              "en": "Test quota 2",
-              "fi": "Testikiintiö 2",
+            Object {
+              "createdAt": "[timestamp-1]",
+              "createdBy": "[id-3]",
+              "eventId": "[id-2]",
+              "id": "[id-4]",
+              "size": 2,
+              "title": Object {
+                "en": "Test quota 2",
+                "fi": "Testikiintiö 2",
+              },
+              "updatedAt": "[timestamp-2]",
+              "updatedBy": "[id-3]",
             },
-          },
-          Object {
-            "eventId": "[id-2]",
-            "id": "[id-4]",
-            "size": 2,
-            "title": Object {
-              "en": "Test quota 3",
-              "fi": "Testikiintiö 3",
+            Object {
+              "createdAt": "[timestamp-2]",
+              "createdBy": "[id-3]",
+              "eventId": "[id-2]",
+              "id": "[id-5]",
+              "size": 2,
+              "title": Object {
+                "en": "Test quota 3",
+                "fi": "Testikiintiö 3",
+              },
+              "updatedAt": "[timestamp-2]",
+              "updatedBy": "[id-6]",
             },
-          },
-        ]
-      `);
+          ]
+        `);
 
         const { rows } = await asRoot(pgClient, () =>
           pgClient.query(
@@ -148,16 +167,7 @@ describe("UpdateEventQuotas", () => {
     const eventId = events[0].id;
 
     await runGraphQLQuery(
-      `mutation UpdateEventQuotas($input: UpdateEventQuotasInput!) {
-        updateEventQuotas(input: $input) {
-          quotas {
-            id
-            title
-            size
-            eventId
-          }
-        }
-      }`,
+      updateEventQuotasMutation,
 
       // GraphQL variables:
       {
@@ -194,18 +204,22 @@ describe("UpdateEventQuotas", () => {
         expect(quotas[0].eventId).toEqual(eventId);
 
         expect(sanitize(quotas)).toMatchInlineSnapshot(`
-        Array [
-          Object {
-            "eventId": "[id-2]",
-            "id": "[id-1]",
-            "size": 1,
-            "title": Object {
-              "en": "Test quota 1",
-              "fi": "Testikiintiö 1",
+          Array [
+            Object {
+              "createdAt": "[timestamp-1]",
+              "createdBy": "[id-3]",
+              "eventId": "[id-2]",
+              "id": "[id-1]",
+              "size": 1,
+              "title": Object {
+                "en": "Test quota 1",
+                "fi": "Testikiintiö 1",
+              },
+              "updatedAt": "[timestamp-2]",
+              "updatedBy": "[id-3]",
             },
-          },
-        ]
-      `);
+          ]
+        `);
 
         const { rows } = await asRoot(pgClient, () =>
           pgClient.query(
@@ -231,16 +245,7 @@ describe("UpdateEventQuotas", () => {
     const eventId = events[0].id;
 
     await runGraphQLQuery(
-      `mutation UpdateEventQuotas($input: UpdateEventQuotasInput!) {
-        updateEventQuotas(input: $input) {
-          quotas {
-            id
-            title
-            size
-            eventId
-          }
-        }
-      }`,
+      updateEventQuotasMutation,
 
       // GraphQL variables:
       {
@@ -277,16 +282,7 @@ describe("UpdateEventQuotas", () => {
     const quotaId = quotas[0].id;
 
     await runGraphQLQuery(
-      `mutation UpdateEventQuotas($input: UpdateEventQuotasInput!) {
-        updateEventQuotas(input: $input) {
-          quotas {
-            id
-            title
-            size
-            eventId
-          }
-        }
-      }`,
+      updateEventQuotasMutation,
 
       // GraphQL variables:
       {

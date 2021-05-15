@@ -14,7 +14,7 @@ const customTypeArray = [
 
 type ValueOf<T> = T[keyof T];
 type ExtendedButtonType = {
-  type: ValueOf<Pick<ButtonProps, "type">> | typeof customTypeArray[number];
+  type?: ValueOf<Pick<ButtonProps, "type">> | typeof customTypeArray[number];
 };
 
 export const ButtonLink: React.FC<

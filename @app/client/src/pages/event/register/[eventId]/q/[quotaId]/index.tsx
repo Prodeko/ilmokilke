@@ -1,9 +1,8 @@
-import React, { useMemo, useState } from "react";
-import { EventRegistrationForm, Redirect, SharedLayout } from "@app/components";
+import React, { useCallback, useMemo, useState } from "react";
+import { EventRegistrationForm, Redirect, SharedLayout, useEventRegistrations } from "@app/components";
 import {
-  Registration,
+  useDeleteEventRegistrationMutation,
   useEventRegistrationPageQuery,
-  useEventRegistrationsSubscription,
 } from "@app/graphql";
 import { List, PageHeader, Typography } from "antd";
 import { NextPage } from "next";
@@ -38,18 +37,19 @@ const EventRegistrationPage: NextPage = () => {
 
   // Subscribe to registrations created after this timestamp
   const after = useMemo(() => new Date().toISOString(), []);
-  const [recentRegistrations, setRecentRegistrations] = useState<
-    Registration[] | null | undefined
-  >(undefined);
-  useEventRegistrationsSubscription({
-    variables: { eventId, after },
-    skip: !eventId,
-    onSubscriptionData: ({ subscriptionData }) =>
-      setRecentRegistrations(
-        subscriptionData?.data?.eventRegistrations
-          ?.registrations as Registration[]
-      ),
-  });
+  const recentRegistrations = useEventRegistrations(eventId as string, after)
+  const [deleteRegistration] = useDeleteEventRegistrationMutation();
+  const [updateToken, setUpdateToken] = useState<string | undefined>(undefined)
+
+  const handleGoBack = useCallback(async () => {
+    // Delete the pending registration if the user goes back to event page
+    if (updateToken) {
+      await deleteRegistration({
+        variables: { updateToken },
+      });
+    }
+    router.push(`/event/${event.slug}`)
+  }, [deleteRegistration, router, event, updateToken]);
 
   // If event or quota is not found, or if event
   // registration is not open redirect to index
@@ -64,9 +64,9 @@ const EventRegistrationPage: NextPage = () => {
   return (
     <SharedLayout query={query} title="">
       <PageHeader
-        title={`${t("title")} ${event?.name[lang] || t("common:loading")} - ${
-          quota?.title[lang] || t("common:loading")
-        }`}
+        title={`${t("title")} ${event?.name[lang] || t("common:loading")} - ${quota?.title[lang] || t("common:loading")
+          }`}
+        onBack={handleGoBack}
       />
       <EventRegistrationForm
         eventId={event?.id}
@@ -76,6 +76,8 @@ const EventRegistrationPage: NextPage = () => {
         }}
         initialValues={formInitialValues}
         quotaId={quota?.id}
+        // Used to delete an unfinished registration
+        setUpdateToken={setUpdateToken}
         type="create"
       />
       {recentRegistrations && (

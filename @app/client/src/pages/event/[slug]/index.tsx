@@ -1,31 +1,29 @@
-import React, { useState } from "react";
+import React from "react";
 import {
+  EventQuotasCard,
   EventRegistrationsTable,
   H2,
   P,
-  ProgressBar,
   SharedLayout,
   useEventLoading,
-  useEventSlug,
+  useEventRegistrations,
+  useQuerySlug
 } from "@app/components";
 import {
   EventPage_EventFragment,
   Registration,
   useEventPageQuery,
-  useEventRegistrationsSubscription,
 } from "@app/graphql";
 import { uploadsLoader } from "@app/lib";
-import { Button, Card, Col, Grid, PageHeader, Row } from "antd";
+import { Col, PageHeader, Row } from "antd";
+import useBreakpoint from "antd/lib/grid/hooks/useBreakpoint";
 import { NextPage } from "next";
 import Image from "next/image";
-import Link from "next/link";
 import { useRouter } from "next/router";
 import useTranslation from "next-translate/useTranslation";
 
-const { useBreakpoint } = Grid;
-
 const EventPage: NextPage = () => {
-  const slug = useEventSlug();
+  const slug = useQuerySlug();
   const { t, lang } = useTranslation("events");
   const query = useEventPageQuery({ variables: { slug } });
   const eventLoadingElement = useEventLoading(query);
@@ -58,28 +56,13 @@ const EventPageInner: React.FC<EventPageInnerProps> = ({ event }) => {
     description,
     headerImageFile,
     createdAt,
-    signupClosed,
-    signupUpcoming,
-    quotas,
     registrations: eventRegistrations,
   } = event;
 
   // Set registrations initially from EventPage_Query data
-  const [registrations, setRegistrations] = useState<
-    Registration[] | null | undefined
-  >(eventRegistrations.nodes as Registration[]);
-
   // Use a subscription to fetch event registrations in real time
-  useEventRegistrationsSubscription({
-    variables: { eventId, after: createdAt },
-    skip: !eventId,
-    onSubscriptionData: ({ subscriptionData }) =>
-      // Update state when subscription receives data
-      setRegistrations(
-        subscriptionData?.data?.eventRegistrations
-          ?.registrations as Registration[]
-      ),
-  });
+  const initialRegistrations = eventRegistrations.nodes as Registration[]
+  const registrations = useEventRegistrations(eventId as string, createdAt, initialRegistrations)
 
   return (
     <>
@@ -111,49 +94,7 @@ const EventPageInner: React.FC<EventPageInnerProps> = ({ event }) => {
           style={{ maxHeight: isMobile ? "100%" : 0 }}
           xs={{ span: 24 }}
         >
-          <Card
-            data-cy="eventpage-quotas-card"
-            style={{
-              marginLeft: !isMobile ? "1rem" : undefined,
-              marginBottom: isMobile ? "1rem" : undefined,
-              width: "100%",
-            }}
-            title={t("register:sidebar.title")}
-            bordered
-          >
-            {quotas?.nodes.map((quota, i) => {
-              const { id: quotaId, title, size } = quota;
-              const totalCount = registrations.filter(
-                (r) => r.quota.id === quotaId
-              ).length;
-              const percentageFilled = Math.round((totalCount / size) * 100);
-
-              return (
-                <div key={quotaId} style={{ paddingBottom: 12 }}>
-                  <Link
-                    href={{
-                      pathname: "/event/register/[eventId]/q/[quotaId]",
-                      query: { eventId, quotaId },
-                    }}
-                  >
-                    <Button
-                      data-cy={`eventpage-quotas-link-${i}`}
-                      disabled={signupClosed || signupUpcoming}
-                      target="a"
-                      block
-                    >
-                      {title[lang]}
-                    </Button>
-                  </Link>
-                  <ProgressBar
-                    filled={totalCount}
-                    percentageFilled={percentageFilled}
-                    size={size}
-                  />
-                </div>
-              );
-            })}
-          </Card>
+          <EventQuotasCard event={event} registrations={registrations} />
         </Col>
         <Col sm={{ span: 16 }} xs={{ span: 24 }}>
           <H2>{name[lang]}</H2>

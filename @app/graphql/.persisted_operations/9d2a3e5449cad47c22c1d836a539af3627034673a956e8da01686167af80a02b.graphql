@@ -1,0 +1,11 @@
+mutation UpdateEventCategory($description: JSON!, $name: JSON!, $ownerOrganization: UUID!, $id: UUID!) {
+  updateEventCategory(
+    input: {patch: {description: $description, name: $name, ownerOrganizationId: $ownerOrganization}, id: $id}
+  ) {
+    eventCategory {
+      id
+      __typename
+    }
+    __typename
+  }
+}

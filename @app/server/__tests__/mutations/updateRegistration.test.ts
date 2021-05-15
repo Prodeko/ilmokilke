@@ -12,30 +12,33 @@ beforeEach(deleteTestData);
 beforeAll(setup);
 afterAll(teardown);
 
+const updateRegistrationMutation = `
+mutation UpdateEventRegistration(
+  $updateToken: String!
+  $firstName: String!
+  $lastName: String!
+) {
+  updateRegistration(
+    input: {
+      updateToken: $updateToken
+      firstName: $firstName
+      lastName: $lastName
+    }
+  ) {
+    registration {
+      id
+      fullName
+    }
+  }
+}`;
+
 describe("UpdateRegistration", () => {
   it("can update a registration with a valid updateToken", async () => {
     const { registrationSecrets } = await createEventDataAndLogin();
     const { update_token: updateToken } = registrationSecrets[0];
 
     await runGraphQLQuery(
-      `mutation UpdateEventRegistration(
-        $updateToken: String!
-        $firstName: String!
-        $lastName: String!
-      ) {
-        updateRegistration(
-          input: {
-            updateToken: $updateToken
-            firstName: $firstName
-            lastName: $lastName
-          }
-        ) {
-          registration {
-            id
-            fullName
-          }
-        }
-      }`,
+      updateRegistrationMutation,
 
       // GraphQL variables:
       {
@@ -83,23 +86,7 @@ describe("UpdateRegistration", () => {
 
   it("can't update registration if registration token is not valid", async () => {
     await runGraphQLQuery(
-      `mutation UpdateEventRegistration(
-        $updateToken: String!
-        $firstName: String!
-        $lastName: String!
-      ) {
-        updateRegistration(
-          input: {
-            updateToken: $updateToken
-            firstName: $firstName
-            lastName: $lastName
-          }
-        ) {
-          registration {
-            id
-          }
-        }
-      }`,
+      updateRegistrationMutation,
 
       // GraphQL variables:
       {

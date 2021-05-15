@@ -1,0 +1,69 @@
+fragment ListEvents_Query on Query {
+  events(first: $first, offset: $offset, orderBy: EVENT_END_TIME_ASC) {
+    nodes {
+      id
+      ...Events_Event
+      __typename
+    }
+    __typename
+  }
+  __typename
+}
+fragment Events_Event on Event {
+  ...EventFields
+  quotas(orderBy: POSITION_ASC) {
+    nodes {
+      ...EventPage_Quota
+      registrations {
+        totalCount
+        __typename
+      }
+      __typename
+    }
+    __typename
+  }
+  registrations(orderBy: CREATED_AT_ASC) {
+    totalCount
+    nodes {
+      ...EventPage_Registration
+      __typename
+    }
+    __typename
+  }
+  __typename
+}
+fragment EventFields on Event {
+  id
+  name
+  slug
+  eventStartTime
+  eventEndTime
+  registrationStartTime
+  registrationEndTime
+  description
+  createdAt
+  isHighlighted
+  isDraft
+  headerImageFile
+  signupOpen
+  signupUpcoming
+  signupClosed
+  __typename
+}
+fragment EventPage_Quota on Quota {
+  id
+  position
+  title
+  size
+  __typename
+}
+fragment EventPage_Registration on Registration {
+  id
+  fullName
+  isQueued
+  createdAt
+  __typename
+}
+query ListEvents($offset: Int!, $first: Int!) {
+  ...ListEvents_Query
+}

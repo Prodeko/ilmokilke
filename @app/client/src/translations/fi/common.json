@@ -1,12 +1,14 @@
 {
   "backHome": "Takaisin etusivulle",
   "create": "Luo",
+  "delete": "Poista",
   "description": "Kuvaus",
   "dragToUpload": "Klikkaa tai raahaa kuva tähän",
   "emailSwitchLabel": "Näytä html-versio",
   "en": "Englanti",
   "fi": "Suomi",
   "headerMenu": {
+    "admin": "Hallintapaneeli",
     "createEvent": "Luo tapahtuma",
     "createEventCategory": "Luo tapahtumakategoria",
     "createOrganization": "Luo organisaatio"
@@ -20,7 +22,7 @@
   "redirect": "Uudelleenohjataan...",
   "settings": "Asetukset",
   "shortDescription": "Lyhyt kuvaus",
-  "signin": "Kirjaudu sisään",
+  "signin": "Kirjaudu",
   "update": "Päivitä",
   "yes": "Kyllä"
 }

@@ -147,10 +147,11 @@ async function runCommand(
     const {
       username = "testuser",
       email = `${username}@example.com`,
-      verified = false,
       name = username,
       avatarUrl = null,
       password = "TestUserPassword",
+      verified = false,
+      isAdmin = false,
     } = payload;
 
     if (!username.startsWith("testuser")) {
@@ -160,10 +161,11 @@ async function runCommand(
     const user = await reallyCreateUser(rootPgPool, {
       username,
       email,
-      verified,
       name,
       avatarUrl,
       password,
+      verified,
+      isAdmin,
     });
 
     let verificationToken: string | null = null;
@@ -179,12 +181,13 @@ async function runCommand(
     const {
       username = "testuser",
       email = `${username}@example.com`,
-      verified = false,
       name = username,
       avatarUrl = null,
       password = "TestUserPassword",
       next = "/",
       orgs = [],
+      verified = false,
+      isAdmin = false,
       existingUser = false,
     } = payload;
     const client = await rootPgPool.connect();
@@ -203,17 +206,19 @@ async function runCommand(
       user = await reallyCreateUser(rootPgPool, {
         username,
         email,
-        verified,
         name,
         avatarUrl,
         password,
+        verified,
+        isAdmin,
       });
       otherUser = await reallyCreateUser(rootPgPool, {
         username: "testuser_other",
         email: "testuser_other@example.com",
         name: "testuser_other",
-        verified: true,
         password: "DOESNT MATTER",
+        verified: true,
+        isAdmin: false,
       });
       session = await createSession(rootPgPool, user.id);
       otherSession = await createSession(rootPgPool, otherUser.id);
@@ -306,31 +311,34 @@ async function reallyCreateUser(
   {
     username,
     email,
-    verified,
     name,
     avatarUrl,
     password,
+    verified,
+    isAdmin,
   }: {
     username?: string;
     email?: string;
-    verified?: boolean;
     name?: string;
     avatarUrl?: string;
     password?: string;
+    verified?: boolean;
+    isAdmin?: boolean;
   }
 ) {
   const {
     rows: [user],
   } = await rootPgPool.query(
-    `SELECT * FROM app_private.really_create_user(
-        username := $1,
-        email := $2,
-        email_is_verified := $3,
-        name := $4,
-        avatar_url := $5,
-        password := $6
-      )`,
-    [username, email, verified, name, avatarUrl, password]
+    `select * from app_private.really_create_user(
+      username := $1,
+      email := $2,
+      name := $3,
+      avatar_url := $4,
+      password := $5,
+      email_is_verified := $6,
+      is_admin := $7
+    )`,
+    [username, email, name, avatarUrl, password, verified, isAdmin]
   );
   return user;
 }
@@ -340,7 +348,11 @@ async function createEventData(
   payload: { [key: string]: any }
 ) {
   const client = await rootPgPool.connect();
-  const { eventSignupUpcoming = false, eventSignupClosed = false } = payload;
+  const {
+    eventSignupUpcoming = false,
+    eventSignupClosed = false,
+    userIsAdmin = false,
+  } = payload;
 
   try {
     await client.query("begin");
@@ -349,8 +361,9 @@ async function createEventData(
       username: "testuser_events",
       email: "testuser_events@example.com",
       name: "testuser",
-      verified: true,
       password: "DOESNT MATTER",
+      verified: true,
+      isAdmin: userIsAdmin,
     });
     const session = await createSession(rootPgPool, user.id);
 
@@ -553,7 +566,7 @@ export const createQuotas = async (
   const quotas = [];
   for (let i = 0; i < count; i++) {
     const title = { fi: `Kiintiö ${i}`, en: `Quota ${i}` };
-    const size = faker.random.number({
+    const size = faker.datatype.number({
       min: 1,
       max: 20,
     });

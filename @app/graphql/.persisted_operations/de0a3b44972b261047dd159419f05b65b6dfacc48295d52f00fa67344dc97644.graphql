@@ -1,0 +1,6 @@
+mutation DeleteEvent($eventId: UUID!) {
+  deleteEvent(input: {id: $eventId}) {
+    clientMutationId
+    __typename
+  }
+}

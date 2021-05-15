@@ -5,9 +5,30 @@ context("Update event", () => {
   beforeEach(() => cy.serverCommand("clearTestEventData"));
   beforeEach(() => cy.serverCommand("clearTestOrganizations"));
 
-  it("can update an existing event", () => {
+  it("redirects to index if user is not admin", () => {
     // Setup
-    cy.serverCommand("createTestEventData").as("createEventDataResult");
+    cy.serverCommand("createTestEventData", {
+      eventSignupUpcoming: true,
+      eventSignupClosed: false,
+    }).as("createEventDataResult");
+
+    // Action
+    cy.get("@createEventDataResult").then(({ event }: any) => {
+      cy.login({
+        verified: true,
+      });
+      cy.visit(Cypress.env("ROOT_URL") + `/admin/event/update/${event.id}`);
+    });
+
+    // Assertion
+    cy.url().should("equal", Cypress.env("ROOT_URL") + "/");
+  });
+
+  it("admin can user update an existing event", () => {
+    // Setup
+    cy.serverCommand("createTestEventData", { userIsAdmin: true }).as(
+      "createEventDataResult"
+    );
 
     // Action
     cy.get("@createEventDataResult").then(
@@ -17,7 +38,7 @@ context("Update event", () => {
           password: "DOESNT MATTER",
           existingUser: true,
         });
-        cy.visit(Cypress.env("ROOT_URL") + `/event/update/${event.id}`);
+        cy.visit(Cypress.env("ROOT_URL") + `/admin/event/update/${event.id}`);
         cy.get(".ant-tabs-tab").as("tabs");
 
         // Assertion
@@ -93,20 +114,27 @@ context("Update event", () => {
         cy.get(".antd-img-crop-modal button").contains("OK").click();
 
         cy.getCy("eventform-button-submit").click();
-      }
-    );
 
-    // Assertion
-    cy.url().should("equal", Cypress.env("ROOT_URL") + "/");
-    cy.getCy("homepage-signup-open-events").should(
-      "contain",
-      "Päivitetty testitapahtuma"
+        // Assertion
+        cy.url().should("equal", Cypress.env("ROOT_URL") + "/admin/event/list");
+        cy.getCy("adminpage-events").should(
+          "contain",
+          "Päivitetty testitapahtuma"
+        );
+        cy.visit(Cypress.env("ROOT_URL"));
+        cy.getCy("homepage-signup-open-events").should(
+          "contain",
+          "Päivitetty testitapahtuma"
+        );
+      }
     );
   });
 
   it("can submit the form without any modifications", () => {
     // Setup
-    cy.serverCommand("createTestEventData").as("createEventDataResult");
+    cy.serverCommand("createTestEventData", { userIsAdmin: true }).as(
+      "createEventDataResult"
+    );
 
     // Action
     cy.get("@createEventDataResult").then(({ event }: any) => {
@@ -115,16 +143,34 @@ context("Update event", () => {
         password: "DOESNT MATTER",
         existingUser: true,
       });
-      cy.visit(Cypress.env("ROOT_URL") + `/event/update/${event.id}`);
+      cy.visit(Cypress.env("ROOT_URL") + `/admin/event/update/${event.id}`);
       cy.getCy("eventform-button-submit").click();
 
       // Assertion
-      cy.url().should("equal", Cypress.env("ROOT_URL") + "/");
+      cy.url().should("equal", Cypress.env("ROOT_URL") + "/admin/event/list");
+      cy.visit(Cypress.env("ROOT_URL"));
       cy.getCy("homepage-signup-open-events").should(
         "contain",
         event.name["fi"]
       );
     });
+  });
+
+  it("redirects to index if user is not part of any organization", () => {
+    // Setup
+    cy.serverCommand("createTestEventData").as("createEventDataResult");
+    cy.login({
+      verified: true,
+      isAdmin: true,
+    });
+
+    // Action
+    cy.get("@createEventDataResult").then(({ event }: any) => {
+      cy.visit(Cypress.env("ROOT_URL") + `/admin/event/update/${event.id}`);
+    });
+
+    // Assertion
+    cy.url().should("equal", Cypress.env("ROOT_URL") + "/");
   });
 
   it("redirects to index if event is not found", () => {
@@ -136,7 +182,7 @@ context("Update event", () => {
       // Invalid event id
       cy.visit(
         Cypress.env("ROOT_URL") +
-          "/event/update/359befe4-1a63-4f30-b226-b116ee131e90"
+          "/admin/event/update/359befe4-1a63-4f30-b226-b116ee131e90"
       );
     });
 

@@ -1,0 +1,69 @@
+fragment UpdateEventRegistrationPage_Query on Query {
+  ...SharedLayout_Query
+  registrationByUpdateToken(updateToken: $updateToken) {
+    ...UpdateEventRegistrationPage_Event
+    __typename
+  }
+  __typename
+}
+fragment SharedLayout_Query on Query {
+  currentUser {
+    ...SharedLayout_User
+    __typename
+  }
+  languages {
+    ...SharedLayout_Languages
+    __typename
+  }
+  __typename
+}
+fragment SharedLayout_User on User {
+  id
+  name
+  username
+  avatarUrl
+  isAdmin
+  isVerified
+  primaryEmail
+  organizationMemberships(first: 20) {
+    totalCount
+    nodes {
+      id
+      isOwner
+      organization {
+        id
+        name
+        slug
+        __typename
+      }
+      __typename
+    }
+    __typename
+  }
+  __typename
+}
+fragment SharedLayout_Languages on AppLanguage {
+  supportedLanguages
+  defaultLanguage
+  __typename
+}
+fragment UpdateEventRegistrationPage_Event on Registration {
+  id
+  firstName
+  lastName
+  quota {
+    id
+    title
+    __typename
+  }
+  event {
+    id
+    name
+    slug
+    __typename
+  }
+  __typename
+}
+query UpdateEventRegistrationPage($updateToken: String!) {
+  ...UpdateEventRegistrationPage_Query
+}

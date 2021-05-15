@@ -75,7 +75,8 @@
   "quota": "Quota",
   "registerToAnEvent": "Signup",
   "removeQuota": "Remove quota",
-  "time": "Time",
+  "startTime": "Start time",
+  "endTime": "End time",
   "updateEvent": {
     "title": "Update event"
   }

@@ -1,0 +1,10 @@
+mutation ClaimRegistrationToken($eventId: UUID!, $quotaId: UUID!) {
+  claimRegistrationToken(input: {eventId: $eventId, quotaId: $quotaId}) {
+    claimRegistrationTokenOutput {
+      registrationToken
+      updateToken
+      __typename
+    }
+    __typename
+  }
+}

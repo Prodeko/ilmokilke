@@ -6,6 +6,8 @@ Object {
     "updateEvent": Object {
       "event": Object {
         "categoryId": "[id-3]",
+        "createdAt": "[timestamp-5]",
+        "createdBy": "[id-4]",
         "description": Object {
           "en": "Updated test description",
           "fi": "Päivitetty testikuvaus",
@@ -22,6 +24,8 @@ Object {
         "ownerOrganizationId": "[id-2]",
         "registrationEndTime": "[timestamp-4]",
         "registrationStartTime": "[timestamp-3]",
+        "updatedAt": "[timestamp-6]",
+        "updatedBy": "[id-4]",
       },
     },
   },
